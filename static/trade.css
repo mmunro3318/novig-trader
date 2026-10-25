@@ -1,0 +1,158 @@
+/* Novig Trader UI. Design tokens first: change the look here, not in components. */
+:root{
+  --bg:#12141a; --panel:#1b1e26; --panel2:#232733; --line:#2e3340; --ink:#e8eaf0; --mut:#8a90a0; --white:#fff;
+  --odds:#22d3ee;            /* odds pop: cyan */
+  --accent:#ff7a1a;          /* burnt orange: selection, buy */
+  --gr:#22c55e; --rd:#ef4444; --yl:#facc15; --bl:#3b82f6;
+  --cash:#fb923c; --open:#f87171;
+  --radius:8px; --gap:10px;
+  --sport-NFL:#3b82f6; --sport-NCAAF:#a855f7; --sport-NBA:#f97316; --sport-UFC:#ef4444; --sport-MMA:#ef4444; --sport-MLB:#22c55e; --sport-NHL:#14b8a6; --sport-other:#64748b;
+  --font:-apple-system,Segoe UI,Inter,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;font:13px/1.35 var(--font);background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit}
+input,select{font:inherit;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:5px;padding:5px 7px}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.num{font-variant-numeric:tabular-nums}
+.up{color:var(--gr)}.dn{color:var(--rd)}.mut{color:var(--mut)}.odds{color:var(--odds);font-weight:700}
+.hidden{display:none!important}
+[data-tip]{position:relative}
+[data-tip]:hover::after{content:attr(data-tip);position:absolute;z-index:50;left:50%;top:100%;transform:translateX(-50%);margin-top:4px;white-space:nowrap;
+  background:#000;color:#fff;font:600 11px var(--font);padding:3px 7px;border-radius:4px;pointer-events:none}
+
+/* ---------- header ---------- */
+header{display:flex;gap:12px;align-items:center;padding:8px 12px;background:#0b0c10;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;flex-wrap:wrap}
+.brand{font-weight:800;letter-spacing:.6px;font-size:15px}
+.badge{padding:2px 8px;border-radius:3px;font-weight:700;font-size:11px}
+.badge.paper{background:var(--yl);color:#111}.badge.live{background:var(--rd)}.badge.off{background:#555}.badge.on{background:var(--gr);color:#04210f}
+.hctl{display:flex;gap:8px;align-items:center;color:var(--mut)}
+#conn{width:9px;height:9px;border-radius:50%;background:var(--gr);display:inline-block}
+.spacer{flex:1}
+
+/* hero account panel: numbers only, labels on hover */
+.hero{display:grid;grid-template-columns:auto auto;grid-template-rows:auto auto;gap:0 14px;align-items:center;border:2px solid #000;background:#0f1117;border-radius:var(--radius);padding:4px 12px}
+.hero .eq{font-size:34px;font-weight:800;color:var(--gr);line-height:1.05;grid-row:1;grid-column:1}
+.hero .sub{grid-row:2;grid-column:1;display:flex;gap:12px;font-weight:700}
+.hero .hside{grid-row:1/3;grid-column:2;display:grid;grid-template-columns:auto auto;gap:2px 10px;text-align:right;align-items:center}
+.hero .wr{color:var(--odds);font-weight:700}.hero .cnt{font-size:22px;font-weight:800;color:var(--white)}
+.hero .cash{color:var(--cash)}.hero .open{color:var(--open)}
+.hero .tot{font-weight:800}
+
+/* ---------- layout ---------- */
+main{display:grid;grid-template-columns:minmax(330px,380px) 1fr minmax(330px,400px);gap:var(--gap);padding:var(--gap);height:calc(100vh - 62px)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:auto;min-height:0}
+.panel h3{margin:0;padding:8px 10px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--mut);border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel);z-index:2;display:flex;gap:8px;align-items:center}
+.col{display:flex;flex-direction:column;gap:var(--gap);min-height:0}
+.col>.panel{flex:1}
+#err{display:none;background:var(--rd);color:#fff;padding:6px 14px;font-weight:600}
+#alerts{display:none;background:var(--yl);color:#111;padding:6px 14px;font-weight:700}
+
+/* ---------- filters ---------- */
+.filters{position:sticky;top:0;z-index:3;background:var(--panel);padding:8px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.filters .row{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.filters input[type=search]{flex:1;min-width:120px}
+.pill{border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:3px 9px;cursor:pointer;font-size:12px}
+.pill.on{border-color:var(--accent);color:var(--accent);font-weight:700}
+.pill .dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:0}
+.sect{padding:8px 10px 4px;font-size:11px;font-weight:800;letter-spacing:1px;color:var(--mut);text-transform:uppercase}
+
+/* ---------- game card ---------- */
+.card{position:relative;display:flex;margin:6px 8px;background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;cursor:pointer}
+.card:hover{border-color:#475069}.card.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.card.past{opacity:.5}
+.card .strip{flex:0 0 18px;background:var(--sport,var(--sport-other));display:flex;align-items:center;justify-content:center}
+.card .strip span{writing-mode:vertical-rl;transform:rotate(180deg);font-size:9px;font-weight:800;letter-spacing:1.5px;color:#fff}
+.card .body{flex:1;padding:7px 9px;min-width:0}
+.card .ttl{font-weight:700;font-size:13.5px;padding-right:64px}
+.hometag{font-size:9px;font-weight:800;color:var(--mut);border:1px solid var(--line);border-radius:3px;padding:0 3px;margin-left:3px;vertical-align:1px}
+.livetag{position:absolute;top:0;right:0;background:var(--rd);color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-bottom-left-radius:6px}
+.livetag.late{animation:bl 1s infinite}
+@keyframes bl{50%{opacity:.4}}
+.meta{display:flex;justify-content:space-around;align-items:center;margin-top:3px;gap:8px}
+.clock{color:var(--mut);font-weight:600}
+.scoreline{color:var(--white);font-weight:800;font-size:14px;white-space:nowrap}
+.ball{font-size:12px}
+.situ{text-align:center;color:var(--yl);font-size:11.5px;margin-top:1px}
+.situ.rz{color:var(--rd);font-weight:700}
+.quick{display:grid;grid-template-columns:minmax(0,1fr) auto auto minmax(0,1fr);gap:6px;align-items:center;margin-top:6px}
+.oddbtn{min-width:0;border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:4px 6px;cursor:pointer;display:flex;gap:6px;align-items:baseline;justify-content:space-between}
+.oddbtn.r{flex-direction:row-reverse}
+.oddbtn .nm{color:var(--mut);font-weight:700}.oddbtn .odds{font-size:14px}
+.oddbtn.sel{border-color:var(--accent);background:#3a2210}
+.oddbtn:disabled{opacity:.4;cursor:default}
+.mini{border:0;border-radius:5px;padding:5px 10px;font-weight:800;cursor:pointer;font-size:12px}
+.mini.buy{background:#1f3b4d;color:#d9f6ff}.mini.buy.armed{background:var(--accent);color:#fff}
+.mini.sell{background:#7a1020;color:#fff}.mini:disabled{opacity:.35;cursor:not-allowed}
+.posrow{display:flex;gap:10px;align-items:baseline;margin-top:6px;font-weight:700}
+.posrow .stake{color:#38bdf8;font-size:15px}.posrow .avg{color:#c084fc}.posrow .pay{color:var(--cash)}
+.posrow .exp{margin-left:auto;cursor:pointer;color:var(--mut)}
+.posdetail{font-size:11.5px;color:var(--mut);margin-top:3px}
+
+/* ---------- markets + ticket ---------- */
+.mtitle{font-size:15px;font-weight:800;color:var(--white);text-transform:none;letter-spacing:0}
+.mgrid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 8px;padding:8px 10px;border-bottom:1px solid var(--line);align-items:start}
+.mgrid .lab{font-size:10.5px;font-weight:800;color:var(--mut);padding-top:5px;white-space:nowrap}
+.chips{display:flex;flex-wrap:nowrap;gap:4px;overflow-x:auto;padding-bottom:2px;min-width:0}
+.chip-m{flex:0 0 54px;border:1px solid var(--line);background:var(--panel2);border-radius:5px;padding:2px 0;cursor:pointer;text-align:center;line-height:1.15}
+.chip-m b{display:block;font-size:12px}.chip-m i{font-style:normal;font-size:10.5px;color:var(--odds)}
+.chip-m.sel{border-color:var(--accent);background:#3a2210}.chip-m.dead{opacity:.35}
+.ticket{padding:10px}
+.sides{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.side{border:2px solid var(--line);border-radius:var(--radius);padding:10px;cursor:pointer;background:var(--panel2)}
+.side.sel{border-color:var(--accent);background:#2a1c12}
+.side .nm{font-size:17px;font-weight:800}.side .big{font-size:30px;font-weight:800;color:var(--odds)}
+.ba{display:flex;gap:12px;color:var(--mut)}
+table{width:100%;border-collapse:collapse}td,th{padding:2px 6px;text-align:right}th{color:var(--mut);font-weight:500}td:first-child,th:first-child{text-align:left}
+.depth td.b{color:var(--gr)}.depth td.a{color:var(--rd)}
+.amt{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:10px;padding:8px;border:1px solid var(--line);border-radius:var(--radius);background:#151821}
+.preset{border:2px solid #7a3c10;background:#b4470f;color:#fff;border-radius:5px;padding:7px 12px;font-weight:800;cursor:pointer}
+.preset.on{border-color:var(--yl);box-shadow:0 0 0 2px var(--yl)}
+.amt input{width:80px;font-size:15px;font-weight:700}
+.go{border:0;border-radius:6px;padding:10px 14px;font-weight:800;font-size:14px;cursor:pointer;background:var(--accent);color:#fff;flex:1;min-width:200px;text-align:left}
+.go:disabled{background:#444;color:#999;cursor:not-allowed}
+.go.pend,.btn.pend,.mini.pend{background:#666!important;animation:bl .8s infinite}
+.cw{background:#3b3208;border:1px solid #806c00;color:#ffe680;border-radius:5px;padding:5px 7px;margin-top:6px;font-size:12px}
+details.adv{margin-top:8px;border:1px dashed var(--line);border-radius:var(--radius);padding:6px 8px}
+details.adv summary{cursor:pointer;font-weight:700;color:var(--mut)}
+.trow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.trig{display:flex;gap:6px;align-items:center;font-size:12px;padding:4px 0;border-top:1px solid var(--line)}
+
+/* ---------- buttons / lists ---------- */
+.btn{border:0;border-radius:5px;padding:8px 11px;font-weight:700;cursor:pointer;font-size:13px;background:var(--accent);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}.btn.s{background:#7a1020}.btn.h{background:#3a4152}.btn.red{background:var(--rd)}.btn.ghost{background:transparent;border:1px solid var(--line)}
+.btns{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.pos{padding:9px 10px;border-bottom:1px solid var(--line)}
+.pos .lbl{font-weight:700}.pos .v{font-size:19px;font-weight:800}
+.sumbar{padding:8px 10px;border-bottom:1px solid var(--line);display:flex;gap:14px;flex-wrap:wrap;font-weight:700}
+.it{padding:6px 10px;border-bottom:1px solid var(--line);font-size:12px}
+.it .lbl{font-weight:700;color:var(--white)}
+.chip{padding:1px 6px;border-radius:3px;font-size:10px;font-weight:800;color:#fff;background:#777}
+.chip.filled{background:var(--gr);color:#04210f}.chip.partial{background:#d98a00}.chip.working,.chip.queued,.chip.check{background:#3366cc}
+.chip.rejected,.chip.error,.chip.unfilled,.chip.expired{background:var(--rd)}.chip.armed{background:#3366cc}.chip.fired{background:var(--gr)}
+details summary{cursor:pointer;color:var(--mut)}
+pre{white-space:pre-wrap;margin:2px 0;color:var(--mut)}
+
+/* ---------- toasts / modal / popover ---------- */
+#toasts{position:fixed;right:12px;bottom:12px;display:flex;flex-direction:column;gap:6px;z-index:100;max-width:420px}
+.toast{background:#0b0c10;border:1px solid var(--line);border-left:5px solid #3366cc;border-radius:6px;padding:8px 10px;box-shadow:0 4px 14px #0008;font-weight:600}
+.toast.ok{border-left-color:var(--gr)}.toast.bad{border-left-color:var(--rd)}.toast.warn{border-left-color:var(--yl)}
+#modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:200}
+#modal .box{background:var(--panel);border:2px solid var(--yl);border-radius:10px;padding:16px;max-width:460px;width:92%}
+#modal h4{margin:0 0 8px;font-size:16px}
+#pop{position:fixed;z-index:150;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px;box-shadow:0 6px 20px #000a;display:none;min-width:190px}
+#pop button{display:block;width:100%;margin:3px 0;text-align:left}
+
+/* ---------- phone ---------- */
+@media(max-width:1000px){
+  main{grid-template-columns:minmax(0,1fr);height:auto}
+  .panel{max-height:none;overflow:visible}
+  .hero{order:-1;width:100%;justify-content:space-between}
+  .hero .eq{font-size:30px}
+  header{gap:8px}
+  .side .big{font-size:24px}
+  .go{min-width:100%}
+}
+
+.depth{font-size:11.5px}.depth td:nth-child(2),.depth td:nth-child(4){max-width:70px;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:1000px){.side{padding:7px}.depth th:nth-child(2),.depth td:nth-child(2),.depth th:nth-child(4),.depth td:nth-child(4){display:none}}

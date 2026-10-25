@@ -26,6 +26,27 @@ CFG = {  # safety rules; override with env vars
     "flatten_alert_clock_s": 300,   # Q4 5:00
 }
 _LOCK = threading.RLock()
+SETTINGS_PATH = os.path.join(ROOT, "data", "settings.json")
+try:
+    with open(SETTINGS_PATH) as _f:
+        for _k, _v in json.load(_f).items():
+            if _k in ("daily_loss_cap_usd", "max_order_usd") and isinstance(_v, (int, float)) and _v > 0: CFG[_k] = float(_v)
+except Exception: pass
+def update_settings(b):
+    """UI settings: daily loss cap (soft: buys past it need a confirm), per-order cap (hard, max 100)."""
+    ch = {}
+    if b.get("daily_loss_cap_usd") is not None:
+        v = float(b["daily_loss_cap_usd"]);
+        if not 1 <= v <= 10000: return {"ok": False, "error": "loss cap must be $1-$10000"}
+        ch["daily_loss_cap_usd"] = v
+    if b.get("max_order_usd") is not None:
+        v = float(b["max_order_usd"])
+        if not 1 <= v <= 100: return {"ok": False, "error": "per-order cap must be $1-$100"}
+        ch["max_order_usd"] = v
+    CFG.update(ch)
+    os.makedirs(os.path.dirname(SETTINGS_PATH), exist_ok=True)
+    with open(SETTINGS_PATH, "w") as f: json.dump({k: CFG[k] for k in ("daily_loss_cap_usd", "max_order_usd")}, f)
+    return {"ok": True, "cfg": CFG}
 
 # ------------------------------------------------------------------ clients per environment
 if ENV == "production":
@@ -171,13 +192,31 @@ def games():
             if m["eventId"] not in by or m["volume"] > by[m["eventId"]]["volume"]: by[m["eventId"]] = m
         out = []
         for e in evs:
-            m = by.get(e["eventId"])
-            q = quote_from_market(m) if m else None
-            out.append({"eventId": e["eventId"], "desc": e["description"], "league": e["league"], "status": e["status"], "startsTs": e["startsTs"],
-                        "money": q, "clock": clock_for(e)})
-        out.sort(key=lambda g: (g["status"] != "OPEN_INGAME", g["startsTs"]))
+            m = by.get(e["eventId"]); ck = clock_for(e)
+            q = order_away_home(quote_from_market(m), ck) if m else None
+            away, _, home = e["description"].partition(" @ ")
+            out.append({"eventId": e["eventId"], "desc": e["description"], "away": away.strip(), "home": home.strip(), "league": e["league"],
+                        "status": e["status"], "phase": "live" if e["status"] == "OPEN_INGAME" else "upcoming", "startsTs": e["startsTs"],
+                        "money": q, "clock": ck})
+        try: out += past_games(now)
+        except Exception: pass
+        out.sort(key=lambda g: (["live", "upcoming", "past"].index(g["phase"]), g["startsTs"]))
         return {"ts": now, "games": out}
     return cached("games", 15, get)
+
+def past_games(now):
+    """Today's finished games (dimmed PAST section). Cached 5 min: they don't change."""
+    def get():
+        today0 = int(dt.datetime.combine(dt.date.today(), dt.time()).timestamp() * 1000)
+        r = _cat("/events", tokens=0, league="NFL,NCAAF", status="FINAL,SETTLED,CLOSED_PREGAME", startsAfter=today0 - 3 * 3600_000, startsBefore=now, limit=200)
+        out = []
+        for e in r.get("items", []):
+            if " @ " not in e["description"] or e["startsTs"] < today0: continue
+            away, _, home = e["description"].partition(" @ ")
+            out.append({"eventId": e["eventId"], "desc": e["description"], "away": away.strip(), "home": home.strip(), "league": e["league"],
+                        "status": e["status"], "phase": "past", "startsTs": e["startsTs"], "money": None, "clock": clock_for(e)})
+        return out
+    return cached("past", 300, get)
 
 def quote_from_market(m):
     outs = m["outcomes"]; bid = {o["outcomeId"]: float((o.get("bid") or {}).get("price") or 0) for o in outs}
@@ -226,20 +265,43 @@ def _clock_board():
             except Exception: pass
         return games
     return cached("espn", 20, get)
-def clock_for(e):
-    if e.get("status") != "OPEN_INGAME": return None
+def _espn_match(e):
     try: away, home = [s.strip().lower() for s in e["description"].split("@")]
     except ValueError: return None
     for g in _clock_board():
         names = lambda t: [str((t or {}).get(k) or "").lower() for k in ("name", "short", "abbr")]
         if any(n and (n == home or n in home or home in n) for n in names(g["home"])) and any(n and (n == away or n in away or away in n) for n in names(g["away"])):
-            secs = None
-            try: mm, ss = (g.get("clock") or "0:00").split(":"); secs = int(mm) * 60 + int(float(ss))
-            except Exception: pass
-            late = (g.get("period") or 0) >= 5 or ((g.get("period") or 0) == 4 and secs is not None and secs <= CFG["flatten_alert_clock_s"])
-            return {"period": g.get("period"), "clock": g.get("clock"), "detail": g.get("detail"), "state": g.get("state"),
-                    "score": f"{g['away']['abbr']} {g['away']['score']} - {g['home']['abbr']} {g['home']['score']}", "late": late}
+            return g
     return None
+
+def clock_for(e):
+    """ESPN game state for a Novig event (pre/in/post). Names are away @ home (US convention; Novig desc is 'Away @ Home')."""
+    g = _espn_match(e)
+    if not g: return None
+    secs = None
+    try: mm, ss = (g.get("clock") or "0:00").split(":"); secs = int(mm) * 60 + int(float(ss))
+    except Exception: pass
+    live = g.get("state") == "in"
+    late = live and ((g.get("period") or 0) >= 5 or ((g.get("period") or 0) == 4 and secs is not None and secs <= CFG["flatten_alert_clock_s"]))
+    a, h = g["away"] or {}, g["home"] or {}
+    return {"period": g.get("period"), "clock": g.get("clock"), "detail": g.get("detail"), "state": g.get("state"),
+            "score": f"{a.get('abbr')} {a.get('score')} - {h.get('abbr')} {h.get('score')}" if g.get("state") != "pre" else None, "late": late,
+            "away": {"abbr": a.get("abbr"), "score": a.get("score"), "color": a.get("color"), "record": a.get("record")},
+            "home": {"abbr": h.get("abbr"), "score": h.get("score"), "color": h.get("color"), "record": h.get("record")},
+            "situation": g.get("situation") if live else None}
+
+def order_away_home(q, clock):
+    """Put moneyline outcomes in away, home order (Novig lists home first). Uses ESPN abbrs when matched."""
+    if not q or len(q["outcomes"]) != 2: return q
+    o = q["outcomes"]
+    if clock and clock.get("away", {}).get("abbr"):
+        aw = clock["away"]["abbr"].upper()
+        if o[1]["name"].upper().split()[0] == aw: q["outcomes"] = [o[1], o[0]]
+        q["orderedBy"] = "espn"
+    else:
+        q["outcomes"] = [o[1], o[0]]; q["orderedBy"] = "assumed-home-first"
+    q["outcomes"][0]["homeAway"] = "away"; q["outcomes"][1]["homeAway"] = "home"
+    return q
 
 # ------------------------------------------------------------------ positions (net, basis incl fees, value, break-even)
 _FC = {}   # fill cache per wallet: {"items": {fillId: fill}, "last": ts, "polled": t}
@@ -303,7 +365,8 @@ def _portfolio():
     today0 = int(dt.datetime.combine(dt.date.today(), dt.time()).timestamp() * 1000)
     out = {"env": ENV, "tradable": TRADABLE, "wallets": [], "cfg": CFG, "ts": int(time.time() * 1000)}
     for label, client, kid, tradable in wallets():
-        w = {"label": label, "tradable": tradable, "positions": [], "error": None, "day": {"fees": 0.0, "realized": 0.0, "fills": 0, "trades_closed": 0}}
+        w = {"label": label, "tradable": tradable, "positions": [], "error": None, "day": {"fees": 0.0, "realized": 0.0, "fills": 0, "trades_closed": 0},
+             "life": {"realized": 0.0, "closed": 0, "wins": 0}}
         try:
             fl = _fills(client, kid); pos = _positions(client, kid)
             held = {}
@@ -328,6 +391,7 @@ def _portfolio():
                 trip, closed = replay(fm, outs)
                 for t in closed:
                     if t["closeTs"] >= today0: w["day"]["realized"] += t["pnl"]; w["day"]["trades_closed"] += 1
+                    w["life"]["realized"] += t["pnl"]; w["life"]["closed"] += 1; w["life"]["wins"] += t["pnl"] > 0
                 net = (hq.get(outs[0], 0) - hq.get(outs[1], 0)) if len(outs) == 2 else 0
                 if not net: continue
                 side = outs[0] if net > 0 else outs[1]; n = abs(net)
@@ -349,16 +413,28 @@ def _portfolio():
                     "avg": round(trip["basis"] / (n / 100), 3) if basis is not None else None, "openTs": trip["openTs"] if trip else None,
                     "feesPaid": round((trip or {}).get("entry_fees", 0) + (trip or {}).get("exit_fees", 0), 2), "adds": (trip or {}).get("adds"),
                     # an exit = buying the other side at its ask (1 - my bid): cash Novig wants up front to exit in ONE order
-                    "exitCash": round(n / 100 * (1 - sale) + xfee, 2) if sale else None})
+                    "exitCash": round(n / 100 * (1 - sale) + xfee, 2) if sale else None,
+                    # held to settlement: pays n/100 if it wins. Win chance ~ market mid (bid/ask midpoint of my side)
+                    "payout": round(n / 100, 2), "winProb": round(((so["bid"] or 0) + (so["ask"] or so["bid"] or 0)) / 2, 3) if so["bid"] else None,
+                    "expValue": round(n / 100 * ((so["bid"] or 0) + (so["ask"] or so["bid"] or 0)) / 2, 2) if so["bid"] else None})
         except Exception as e:
             w["error"] = str(e)[:300]
         if tradable:
-            w["cash"] = cash(fresh=False)
+            w["cash"] = cash(fresh=False); w["cashError"] = _CASH_ERR.get("msg") if w["cash"] is None else None
             w["exitCashAll"] = round(sum(p["exitCash"] or 0 for p in w["positions"]), 2)
         w["day"] = {k: round(v, 2) if isinstance(v, float) else v for k, v in w["day"].items()}
         unreal = sum(p["pnl"] or 0 for p in w["positions"])
         w["day"]["unrealized"] = round(unreal, 2); w["day"]["total"] = round(w["day"]["realized"] + unreal, 2)
         w["day"]["lossCapHit"] = w["day"]["total"] <= -CFG["daily_loss_cap_usd"]
+        ps = w["positions"]
+        w["summary"] = {"openCount": len(ps), "openValue": round(sum(p["value"] or 0 for p in ps), 2),
+            "openBasis": round(sum(p["basis"] or 0 for p in ps), 2), "payoutIfAllWin": round(sum(p["payout"] for p in ps), 2),
+            "expValue": round(sum(p["expValue"] or 0 for p in ps), 2),
+            "expReturn": round(sum((p["expValue"] or 0) - (p["basis"] or 0) for p in ps if p["basis"] is not None), 2),
+            "realizedAll": round(w["life"]["realized"], 2), "totalPnl": round(w["life"]["realized"] + unreal, 2),
+            "winRate": round(w["life"]["wins"] / w["life"]["closed"], 4) if w["life"]["closed"] else None, "closedAll": w["life"]["closed"],
+            "equity": round((w.get("cash") or 0) + sum(p["value"] or 0 for p in ps), 2) if w.get("cash") is not None else None}
+        w["life"]["realized"] = round(w["life"]["realized"], 2)
         out["wallets"].append(w)
     return out
 
@@ -370,7 +446,11 @@ def _db():
     c.execute("""create table if not exists intents(idem text primary key, created integer, updated integer, env text, action text,
         market_id text, outcome_id text, usd real, slip real, target_qty integer, ref_price real, max_price real, status text,
         filled_qty integer default 0, cost real default 0, fee real default 0, attempts integer default 0, client_ids text default '[]',
-        message text default '', log text default '[]')"""); c.commit(); return c
+        message text default '', log text default '[]')""")
+    cols = {r[1] for r in c.execute("pragma table_info(intents)")}
+    for col in ("label", "kind", "event_desc", "outcome_name", "source"):
+        if col not in cols: c.execute(f"alter table intents add column {col} text default ''")
+    c.commit(); return c
 DB = _db(); Q = queue.Queue()
 
 def _upd(idem, **kw):
@@ -396,20 +476,56 @@ def submit(b):
     if len(idem) < 8: return {"ok": False, "error": "missing idempotency key"}
     act = b.get("action"); usd = float(b.get("usd") or 0); slip = float(b.get("slipCents") or CFG["default_slip_cents"])
     if not TRADABLE: return {"ok": False, "error": "ORDERS_OFF", "message": f"Orders are disabled in {ENV} mode (see README: live trading key)."}
-    if act not in ("BUY", "SELL_ALL", "SELL_HALF"): return {"ok": False, "error": "bad action"}
+    if act not in ("BUY", "SELL_ALL", "SELL_HALF", "SELL_USD"): return {"ok": False, "error": "bad action"}
+    if act == "SELL_USD" and not 0 < usd <= 10000: return {"ok": False, "error": "sell amount must be > $0"}
+    # name the exact market on every order; anything that is not a plain single-game line needs its own confirm
+    lab = label_for(b.get("marketId"), b.get("outcomeId"), b.get("eventDesc"))
+    if act == "BUY" and lab["kind"] != "GAME" and not b.get("confirmSpecial"):   # exits are never held up
+        return {"ok": False, "error": "CONFIRM_SPECIAL", "kind": lab["kind"], "label": lab["label"],
+                "message": f"This is a {lab['kind'].lower()} market, not a single-game bet: {lab['label']}. Confirm to send."}
     if act == "BUY":
         if not 0 < usd <= CFG["max_order_usd"]: return {"ok": False, "error": "PER_ORDER_CAP", "message": f"Max ${CFG['max_order_usd']:.0f} per order."}
         try:
             pf = portfolio(); w = [x for x in pf["wallets"] if x["tradable"]][0]
-            if w["day"]["lossCapHit"]: return {"ok": False, "error": "DAILY_LOSS_CAP", "message": f"Day P&L {w['day']['total']:+.2f} hit the -${CFG['daily_loss_cap_usd']:.0f} cap. Sells still work."}
+            if w["day"]["lossCapHit"] and not b.get("overrideLossCap"):   # soft cap: warn, he can override per order
+                return {"ok": False, "error": "LOSS_CAP_CONFIRM", "message": f"Day P&L {w['day']['total']:+.2f} is past your -${CFG['daily_loss_cap_usd']:.0f} daily loss cap. Confirm to keep buying."}
         except IndexError: pass
     if not 0 < slip <= 10: return {"ok": False, "error": "slippage must be 0-10 cents"}
     with _LOCK:
-        cur = DB.execute("insert or ignore into intents(idem,created,updated,env,action,market_id,outcome_id,usd,slip,status) values(?,?,?,?,?,?,?,?,?,?)",
-                         (idem, int(time.time() * 1000), int(time.time() * 1000), ENV, act, b["marketId"], b["outcomeId"], usd, slip, "queued"))
+        cur = DB.execute("insert or ignore into intents(idem,created,updated,env,action,market_id,outcome_id,usd,slip,status,label,kind,event_desc,outcome_name,source) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                         (idem, int(time.time() * 1000), int(time.time() * 1000), ENV, act, b["marketId"], b["outcomeId"], usd, slip, "queued",
+                          lab["label"], lab["kind"], lab["event"], lab["outcome"], str(b.get("source") or "ui")[:40]))
         DB.commit()
     if cur.rowcount == 0: return {"ok": True, "duplicate": True, "intent": intent(idem)}
     Q.put(idem); return {"ok": True, "intent": intent(idem)}
+
+GAME_TYPES = ("MONEY", "SPREAD", "TOTAL", "TEAM_TOTAL")
+def label_for(mid, oid, event_desc=None):
+    """Plain-English market name + kind: GAME (single game line), FUTURE (season-long, e.g. Super Bowl winner),
+    PARLAY (combo), OTHER. Built from the catalog so the browser can't mislabel it."""
+    hb = _cache.get("book" + str(mid))   # the ticket's book is almost always cached already (no extra call before an order)
+    if hb and time.time() - hb[0] < 120: q = hb[1]; league = ""
+    else:
+        try: m = cached("mkt" + str(mid), 30, lambda: cat_market(mid, priority=True))
+        except Exception: m = None
+        if not m: return {"kind": "OTHER", "label": f"unknown market {str(mid)[-6:]}", "event": event_desc or "", "outcome": ""}
+        q = {**quote_from_market(m), "eventId": m.get("eventId")}; league = (m.get("league") or "").upper()
+    o = next((x for x in q["outcomes"] if x["outcomeId"] == oid), None)
+    on = o["name"] if o else "?"; t = (q.get("type") or "").upper(); desc = q.get("desc") or ""; ev = ""
+    for g in (_cache.get("games") or (0, {"games": []}))[1].get("games", []):
+        if g["eventId"] == q.get("eventId"): ev = g["desc"]; break
+    known = bool(ev); ev = ev or event_desc or ""   # GAME only when the server itself knows the event as a listed game
+    if "PARLAY" in t or "COMBO" in t or league == "COMBO": kind = "PARLAY"
+    elif t in GAME_TYPES and known and " @ " in ev and len(q["outcomes"]) == 2: kind = "GAME"
+    elif not known: kind = "FUTURE" if t not in GAME_TYPES else "OTHER"
+    else: kind = "OTHER"
+    vs = ev.replace(" @ ", " at ")
+    if t == "MONEY": lab = f"{on} to win ({vs})"
+    elif t == "SPREAD": lab = f"{on} spread ({vs})"
+    elif t == "TOTAL": lab = f"{on} total points ({vs})"
+    elif t == "TEAM_TOTAL": lab = f"{desc.replace(' TEAM_TOTAL', '')} team points: {on} ({vs})"
+    else: lab = f"{on}: {desc or t}" + (f" ({vs})" if vs else "")
+    return {"kind": kind, "label": lab, "event": ev, "outcome": on}
 
 def _find_by_client(cid):
     """Did an order with this clientId reach the exchange? -> (orderId|None, fills[])"""
@@ -451,12 +567,18 @@ def cash(fresh=True):
     """Tradable sub-account cash (USD) or None if unreadable. GET /v3/account/subaccounts/{keyId}/balance works with
     the sub-account's own trading key (docs: 'Key: any', trading key reads its own sub-account)."""
     def get():
-        r = _unwrap(W.subaccount_balance(W.key_id), W.key_id)
-        if _err(r) or not isinstance(r, dict) or r.get("balance") is None: raise RuntimeError(f"balance: {r.get('status') if isinstance(r, dict) else r}")
-        return {"cash": float(r["balance"])}
-    if not (W and W.has_key): return None
+        errs = []
+        for cl in ([W] + ([R] if ENV == "production" and R is not W and R and R.has_key else [])):
+            r = _unwrap(cl.subaccount_balance(W.key_id), W.key_id)
+            if not _err(r) and isinstance(r, dict) and r.get("balance") is not None:
+                _CASH_ERR.pop("msg", None); return {"cash": float(r["balance"])}
+            errs.append(f"{'trading' if cl is W else 'read'} key: {r.get('status') if isinstance(r, dict) else '?'} {(r.get('code') or r.get('error') or '') if isinstance(r, dict) else str(r)[:60]}")
+        _CASH_ERR["msg"] = "balance unreadable (" + "; ".join(errs) + ")"; raise RuntimeError(_CASH_ERR["msg"])
+    if not (W and W.has_key): _CASH_ERR["msg"] = "no trading key"; return None
     try: return (get() if fresh else cached("cash", 3, get))["cash"]
-    except Exception: return None
+    except Exception as e:
+        _CASH_ERR.setdefault("msg", str(e)[:160]); return None
+_CASH_ERR = {}
 
 def per_ctr_cash(price, coef=0.06):
     """Cash Novig wants up front per contract for a taker buy at `price` (cost + fee). Exits are buys of the
@@ -492,9 +614,11 @@ def execute(idem):
         else:
             net = _net(it["market_id"], mine["outcomeId"], other["outcomeId"])
             if net <= 0: return _upd(idem, status="rejected", message="no net position to sell", log=f"net={net}")
-            target = net if it["action"] == "SELL_ALL" else max(1, net // 2)
             buy_id, ref = other["outcomeId"], other["ask"]
             if not ref: return _upd(idem, status="rejected", message="nobody bidding for your side right now (no liquidity)", log="no bid")
+            if it["action"] == "SELL_USD":   # $N of proceeds at today's sell price (1 - opposite ask), never more than held
+                target = min(net, max(1, int(math.ceil(it["usd"] * 100 / max(0.001, 1 - ref)))))
+            else: target = net if it["action"] == "SELL_ALL" else max(1, net // 2)
         max_price = snap(min(0.999, ref + it["slip"] / 100), "down")
         if not selling and target * max_price / 100 > CFG["max_order_usd"] + 0.01:
             target = int(CFG["max_order_usd"] * 100 / max_price)
@@ -567,7 +691,7 @@ def execute(idem):
         left = 0
         if selling:
             netnow = _net(it["market_id"], mine["outcomeId"], other["outcomeId"])
-            goal = 0 if it["action"] == "SELL_ALL" else max(0, (filled + netnow) - target)
+            goal = 0 if it["action"] == "SELL_ALL" else max(0, (filled + netnow) - target)   # SELL_HALF / SELL_USD: keep the rest
             left = max(0, netnow - goal)
             if filled and left <= 0: st = "filled"
         avg = cost / filled * 100 if filled else None
@@ -622,7 +746,78 @@ def start():
             except Exception: pass
     threading.Thread(target=bg, daemon=True).start()
     threading.Thread(target=worker, daemon=True).start()
+    threading.Thread(target=trigger_watcher, daemon=True).start()
+
+# ------------------------------------------------------------------ local triggers ("limit orders" that live on OUR side, not on Novig's book)
+# The watcher checks armed triggers every ~2s against the live quote and, the moment one is hit, submits a normal
+# IOC intent (same slippage cap, same idempotency: idem = trg-<id>, so a trigger can only ever fire once).
+TRIG_CONDS = {"odds_gte": "odds ≥", "odds_lte": "odds ≤", "profit_pct_gte": "profit ≥ %", "profit_pct_lte": "loss ≤ % (stop)"}
+DB.execute("""create table if not exists triggers(id text primary key, created integer, env text, market_id text, outcome_id text, action text,
+    usd real, cond text, target real, slip real, status text, label text default '', idem text default '', message text default '', expires integer)"""); DB.commit()
+
+def triggers(n=50):
+    with _LOCK: rows = DB.execute("select * from triggers where env=? order by created desc limit ?", (ENV, n)).fetchall()
+    return [dict(r) for r in rows]
+
+def add_trigger(b):
+    if not TRADABLE: return {"ok": False, "error": "ORDERS_OFF", "message": "orders are off in this mode"}
+    act = b.get("action"); cond = b.get("cond")
+    if act not in ("BUY", "SELL_ALL", "SELL_HALF", "SELL_USD"): return {"ok": False, "error": "bad action"}
+    if cond not in TRIG_CONDS: return {"ok": False, "error": "bad condition"}
+    if cond.startswith("profit") and act == "BUY": return {"ok": False, "error": "profit/loss targets are for sells"}
+    try: target = float(b.get("target"))
+    except (TypeError, ValueError): return {"ok": False, "error": "target must be a number"}
+    usd = float(b.get("usd") or 0)
+    if act == "BUY" and not 0 < usd <= CFG["max_order_usd"]: return {"ok": False, "error": "PER_ORDER_CAP", "message": f"Max ${CFG['max_order_usd']:.0f} per order."}
+    lab = label_for(b.get("marketId"), b.get("outcomeId"), b.get("eventDesc"))
+    if act == "BUY" and lab["kind"] != "GAME": return {"ok": False, "error": "triggers can only buy single-game lines"}
+    tid = uuid.uuid4().hex[:12]; hrs = min(24.0, float(b.get("hours") or 6))
+    with _LOCK:
+        DB.execute("insert into triggers values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (tid, int(time.time() * 1000), ENV, b["marketId"], b["outcomeId"], act, usd, cond, target,
+                   float(b.get("slipCents") or CFG["default_slip_cents"]), "armed", lab["label"], "", "", int((time.time() + hrs * 3600) * 1000))); DB.commit()
+    return {"ok": True, "trigger": next(t for t in triggers() if t["id"] == tid)}
+
+def cancel_trigger(tid):
+    with _LOCK: DB.execute("update triggers set status='canceled', message='canceled by you' where id=? and status='armed'", (tid,)); DB.commit()
+    return {"ok": True}
+
+def _trig_set(tid, **kw):
+    with _LOCK: DB.execute(f"update triggers set {','.join(k + '=?' for k in kw)} where id=?", (*kw.values(), tid)); DB.commit()
+
+def _check_trigger(t):
+    if time.time() * 1000 > t["expires"]: return _trig_set(t["id"], status="expired", message="expired unfired")
+    q = book(t["market_id"]); side = next((o for o in q["outcomes"] if o["outcomeId"] == t["outcome_id"]), None)
+    if not side: return
+    if q.get("status") not in (None, "OPEN"): return _trig_set(t["id"], status="expired", message=f"market {q.get('status')}")
+    hit = False; now_txt = ""
+    if t["cond"].startswith("odds"):
+        px = side["ask"] if t["action"] == "BUY" else side["bid"]   # buy at ask, sell gets bid
+        if not px: return
+        odds = 1 / px; now_txt = f"odds {odds:.2f}"
+        hit = odds >= t["target"] if t["cond"] == "odds_gte" else odds <= t["target"]
+    else:
+        pf = portfolio(); pos = next((p for w in pf["wallets"] if w["tradable"] for p in w["positions"] if p["marketId"] == t["market_id"] and p["sideId"] == t["outcome_id"]), None)
+        if not pos: return _trig_set(t["id"], status="expired", message="no position left to sell")
+        if pos["pnl"] is None or not pos["basis"]: return
+        pct = pos["pnl"] / pos["basis"] * 100; now_txt = f"P&L {pct:+.1f}%"
+        hit = pct >= t["target"] if t["cond"] == "profit_pct_gte" else pct <= -abs(t["target"])
+    if not hit: return _trig_set(t["id"], message=f"watching: {now_txt}")
+    idem = "trg-" + t["id"]
+    r = submit({"idem": idem, "action": t["action"], "marketId": t["market_id"], "outcomeId": t["outcome_id"], "usd": t["usd"], "slipCents": t["slip"], "source": "trigger"})
+    if r.get("ok"): _trig_set(t["id"], status="fired", idem=idem, message=f"fired at {now_txt}")
+    else: _trig_set(t["id"], status="blocked", message=f"hit at {now_txt} but not sent: {r.get('message') or r.get('error')}")
+
+def trigger_watcher():
+    while True:
+        time.sleep(2)
+        try:
+            with _LOCK: armed = [dict(r) for r in DB.execute("select * from triggers where env=? and status='armed'", (ENV,)).fetchall()]
+            for t in armed:
+                try: _check_trigger(t)
+                except RateLimited: pass
+                except Exception as e: _trig_set(t["id"], message=f"check error: {str(e)[:80]}")
+        except Exception: traceback.print_exc()
 
 def status():
-    return {"catalog": CAT.state(), "env": ENV, "host": C.host, "tradable": TRADABLE, "cfg": CFG, "readKey": bool(R and R.has_key), "tradingKey": bool(W and W.has_key),
+    return {"catalog": CAT.state(), "env": ENV, "trigConds": TRIG_CONDS, "host": C.host, "tradable": TRADABLE, "cfg": CFG, "readKey": bool(R and R.has_key), "tradingKey": bool(W and W.has_key),
             "wallets": [w[0] for w in wallets()]}

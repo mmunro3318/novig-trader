@@ -224,6 +224,7 @@ class H(SimpleHTTPRequestHandler):
             if p.startswith("/api/t/book/"): return self.j(TR.book(p.split("/")[4]))
             if p == "/api/t/portfolio": return self.j(TR.portfolio())
             if p == "/api/t/intents": return self.j({"intents": TR.recent(int(q.get("n", 30)))})
+            if p == "/api/t/triggers": return self.j({"triggers": TR.triggers()})
             if p.startswith("/api/t/intent/"): return self.j(TR.intent(p.split("/")[4]) or {"ok": False, "error": "unknown"})
             if p == "/api/journal/days": return self.j({"days": J.days(JDB), "tags": J.TAGS})
             if p.startswith("/api/journal/story/"): return self.j(J.story(JDB, p.split("/")[4]))
@@ -253,6 +254,9 @@ class H(SimpleHTTPRequestHandler):
         body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
         try:
             if self.path == "/api/t/order": return self.j(TR.submit(body))
+            if self.path == "/api/t/trigger": return self.j(TR.add_trigger(body))
+            if self.path == "/api/t/trigger/cancel": return self.j(TR.cancel_trigger(str(body.get("id", ""))))
+            if self.path == "/api/t/settings": return self.j(TR.update_settings(body))
             if self.path == "/api/t/flatten":
                 pf = TR.portfolio(fresh=True); res = []
                 for w in pf["wallets"]:

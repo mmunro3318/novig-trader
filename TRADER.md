@@ -80,3 +80,18 @@ What the app does now:
 * Header shows **cash**. Each position shows "cash needed to exit at once ~$X". Buy buttons get a
   yellow ring and a warning line when that buy would leave less cash than a one-shot exit of
   everything needs. That's only a warning, so you can still buy.
+
+## UI pass from Michael's feedback board (Oct 25, 2026)
+
+Files: `static/trade.html` (shell), `static/trade.css` (design tokens at the top: colors, sport colors, odds color), `static/trade.js` (one render function per component).
+
+- **Game cards**: sport shown as a colored left strip (NFL blue, CFB purple, ...). Title is always `Away @ Home` with a small HOME tag; outcome buttons follow the same left/right order (server reorders Novig's home-first list using ESPN abbreviations). Center row: clock + scoreline `🏈 DEN 30 - 16 ARI` (ball icon on the side that has it), then `ARI ball · 1st & Goal · 1 yd to end zone`. Quick row: `[away odds] BUY SELL▾ [home odds]`: pick a team, then BUY $amount (two clicks = the confirm). SELL = sell all; ▾ = sell half / sell $N. Position row: cost · avg odds · pays-if-wins, ▼ for details.
+- **Filters**: search, sport, status (live/upcoming/past), date (today/tomorrow/all), ★ Mine. Sections: Today · your positions, Today, Later, Past (dimmed; folded on phones).
+- **Markets**: organized rows: WINNER, SPREAD − (sorted), SPREAD +, TOTAL, team points. Each chip shows the line and its odds.
+- **Ticket**: pick a side, pick/type an amount ($1/$2/$5/$10 fill the field; typing works; the ticket is no longer re-drawn every 1.5s, which is what wiped typed numbers), then one big confirm button that names the exact market: `BUY $5 · KC to win (Kansas City Chiefs at Seattle Seahawks) @ 2.35`.
+- **Feedback**: every click shows a toast at once (sending → queued → FILLED with contracts, odds, fees) and the button shows `sending…` / `✓ sent`.
+- **Receipts**: market name, contracts, odds and cents you got (buy) or sold at (sell), cost or proceeds, fees, time with zone (e.g. PT).
+- **Special markets**: the server labels every order itself (GAME / FUTURE / PARLAY / OTHER). Any buy that isn't a single-game line needs a separate confirm naming the market.
+- **Daily loss cap**: now soft. Past the cap, a buy pops a confirm ("I'm sure"); sells are never blocked. Cap and per-order max are editable in ⚙ (saved to `data/settings.json`), with the time zone (default = this computer's).
+- **Account hero** (top right, labels on hover): account value (cash + open), cash, open value, today's P&L, win rate, open count, est. return if held (win chance × payout − cost), total P&L.
+- **Targets (local limit orders)**: Ticket → Advanced. "When odds ≥ / ≤ X" (buy uses the ask, sell uses the sell-now price) or "profit ≥ X% / loss ≥ X%" for sells. Watched server-side every ~2s; fires one normal IOC order (same slippage cap, idempotent `trg-<id>`), then disarms. Expires after 1-12h. Trailing and compound rules are not built yet.

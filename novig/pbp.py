@@ -68,12 +68,24 @@ def scoreboard(league="NFL", date: str | None = None):
     out = []
     for e in d.get("events", []):
         c = e["competitions"][0]; st = c["status"]
-        teams = {t["homeAway"]: {"abbr": t["team"].get("abbreviation"), "name": t["team"].get("displayName"), "short": t["team"].get("shortDisplayName"),
+        teams = {t["homeAway"]: {"id": t["team"].get("id"), "abbr": t["team"].get("abbreviation"), "name": t["team"].get("displayName"), "short": t["team"].get("shortDisplayName"),
                                  "color": "#" + (t["team"].get("color") or "888888"), "score": t.get("score"), "record": (t.get("records") or [{}])[0].get("summary")} for t in c["competitors"]}
         odds = (c.get("odds") or [{}])[0]
+        sit = c.get("situation") or {}
+        poss = None
+        if sit.get("possession"):
+            poss = "home" if str(sit["possession"]) == str((teams.get("home") or {}).get("id")) else "away" if str(sit["possession"]) == str((teams.get("away") or {}).get("id")) else None
+        to_goal = None
+        try:   # possessionText "DEN 46": on own side -> 100-46 to go, on opponent's side -> 46; "50" = midfield
+            pt = (sit.get("possessionText") or "").split(); yl = int(pt[-1])
+            own = (teams.get(poss) or {}).get("abbr")
+            to_goal = 50 if yl == 50 else (100 - yl if len(pt) > 1 and pt[0] == own else yl)
+        except Exception: pass
+        situation = {"poss": poss, "down": sit.get("shortDownDistanceText"), "downText": sit.get("downDistanceText"), "toGoal": to_goal,
+                     "redZone": bool(sit.get("isRedZone")), "lastPlay": ((sit.get("lastPlay") or {}).get("text") or "")[:160]} if poss else None
         out.append({"espnId": e["id"], "league": league, "name": e["name"], "startsTs": _ms(e["date"]), "state": st["type"]["state"],
                     "detail": st["type"].get("shortDetail"), "period": st.get("period"), "clock": st.get("displayClock"),
-                    "home": teams.get("home"), "away": teams.get("away"), "spread": odds.get("details"), "overUnder": odds.get("overUnder")})
+                    "home": teams.get("home"), "away": teams.get("away"), "spread": odds.get("details"), "overUnder": odds.get("overUnder"), "situation": situation})
     return {"source": "espn", "url": url, "games": out}
 
 def classify(p) -> list[str]:

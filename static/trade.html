@@ -1,121 +1,43 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Novig Trader</title>
-<style>
-:root{--bg:#f4f4f2;--ink:#111;--mut:#777;--line:#ddd;--or:#ff5a1f;--gr:#0a8f4a;--rd:#d6262b;--yl:#ffd400}
-*{box-sizing:border-box}body{margin:0;font:13px/1.35 -apple-system,Segoe UI,Inter,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-header{display:flex;gap:14px;align-items:center;padding:8px 14px;background:#111;color:#fff;position:sticky;top:0;z-index:5;flex-wrap:wrap}
-header b{font-size:15px;letter-spacing:.5px}.badge{padding:2px 8px;border-radius:3px;font-weight:700;font-size:11px}
-.paper{background:var(--yl);color:#111}.live{background:var(--rd)}.off{background:#555}.on{background:var(--gr)}
-.stat{font-variant-numeric:tabular-nums}.stat i{color:#aaa;font-style:normal;margin-right:4px}
-#conn{width:9px;height:9px;border-radius:50%;background:var(--gr);display:inline-block}
-main{display:grid;grid-template-columns:270px 1fr 400px;gap:10px;padding:10px;height:calc(100vh - 44px)}
-section{background:#fff;border:1px solid var(--line);border-radius:6px;overflow:auto}
-h3{margin:0;padding:8px 10px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--mut);border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff}
-.g{padding:7px 10px;border-bottom:1px solid #eee;cursor:pointer}.g:hover{background:#fafafa}.g.sel{background:#fff3ec;border-left:3px solid var(--or)}
-.g .t{font-weight:600}.g .q{display:flex;justify-content:space-between;color:var(--mut);font-variant-numeric:tabular-nums}
-.live-dot{color:var(--rd);font-weight:700;font-size:10px}.late{background:var(--rd);color:#fff;padding:0 5px;border-radius:3px;font-size:10px;animation:bl 1s infinite}
-@keyframes bl{50%{opacity:.4}}
-.mk{display:flex;gap:6px;flex-wrap:wrap;padding:8px 10px;border-bottom:1px solid var(--line)}
-.mk button{border:1px solid var(--line);background:#fff;padding:4px 8px;border-radius:4px;cursor:pointer}.mk button.sel{border-color:var(--or);background:#fff3ec}
-.sides{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px}
-.side{border:1px solid var(--line);border-radius:6px;padding:10px}
-.side .nm{font-size:18px;font-weight:700}.big{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums}
-.ba{display:flex;gap:12px;color:var(--mut);font-variant-numeric:tabular-nums}
-.btns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-.btn{border:0;border-radius:5px;padding:9px 12px;font-weight:700;cursor:pointer;font-size:14px;background:var(--or);color:#fff;min-width:54px}
-.btn:disabled{opacity:.45;cursor:not-allowed}.btn.s{background:#111}.btn.h{background:#555}.btn.red{background:var(--rd)}
-.btn.warn{box-shadow:inset 0 0 0 3px var(--yl)}.cw{background:#fff8c4;border:1px solid #e8d400;border-radius:4px;padding:4px 6px;margin-top:6px;font-size:12px}
-.btn.pend{background:#999!important;animation:bl .8s infinite}
-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}td,th{padding:3px 6px;text-align:right}th{color:var(--mut);font-weight:500}td:first-child,th:first-child{text-align:left}
-.depth td.b{color:var(--gr)}.depth td.a{color:var(--rd)}
-.pos{padding:9px 10px;border-bottom:1px solid #eee}.pos .v{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
-.up{color:var(--gr)}.dn{color:var(--rd)}.mut{color:var(--mut)}
-.it{padding:6px 10px;border-bottom:1px solid #eee;font-size:12px}.chip{padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;color:#fff;background:#777}
-.chip.filled{background:var(--gr)}.chip.partial{background:#d98a00}.chip.working,.chip.queued,.chip.check{background:#3366cc}.chip.rejected,.chip.error,.chip.unfilled,.chip.expired{background:var(--rd)}
-#err{display:none;background:var(--rd);color:#fff;padding:6px 14px;font-weight:600}
-#alerts{display:none;background:var(--yl);padding:6px 14px;font-weight:700}
-.col{display:flex;flex-direction:column;gap:10px;overflow:hidden}.col section{flex:1}
-select,input{font:inherit;padding:3px}
-details summary{cursor:pointer;color:var(--mut)}
-@media(max-width:1000px){main{grid-template-columns:1fr;height:auto}section{max-height:none}}
-</style></head><body>
-<header><b>NOVIG TRADER</b><span id="env" class="badge paper">…</span><span id="ord" class="badge off">orders …</span>
-<span class="stat"><i>day</i><span id="dTot">–</span></span><span class="stat"><i>realized</i><span id="dReal">–</span></span>
-<span class="stat"><i>open</i><span id="dUn">–</span></span><span class="stat"><i>fees today</i><span id="dFee">–</span></span>
-<span class="stat"><i>cash</i><span id="dCash">–</span></span><span class="stat"><i>loss cap</i><span id="dCap">–</span></span>
-<span class="stat"><i>max slip</i><select id="slip"><option>1</option><option selected>2</option><option>3</option><option>5</option></select>¢</span>
-<button class="btn red" id="flatAll" title="Sell every open position now">FLATTEN ALL</button>
-<span><span id="conn"></span> <span id="age" class="mut"></span></span></header>
+<title>Novig Trader</title><link rel="stylesheet" href="trade.css?v=5"></head><body>
+<header>
+  <span class="brand">NOVIG TRADER</span><span id="env" class="badge paper">…</span><span id="ord" class="badge off">orders …</span>
+  <span class="hctl" data-tip="Max slippage: a buy never fills more than this many cents above the ask">slip <select id="slip"><option>1</option><option selected>2</option><option>3</option><option>5</option></select>¢</span>
+  <button class="btn ghost" id="setBtn" data-tip="Settings: loss cap, per-order cap, time zone">⚙</button>
+  <button class="btn red" id="flatAll" data-tip="Sell every open position in the tradable wallet now">FLATTEN ALL</button>
+  <span class="hctl"><span id="conn"></span><span id="age"></span></span>
+  <span class="spacer"></span>
+  <div class="hero num" id="hero">
+    <div class="eq" id="hEq" data-tip="Account value: cash + open positions at sell-now prices">–</div>
+    <div class="sub"><span class="cash" id="hCash" data-tip="Available cash">–</span><span class="open" id="hOpen" data-tip="Open positions value (sell-now)">–</span><span id="hDay" data-tip="Today's P&L (realized + open, after exit fees)">–</span></div>
+    <div class="hside">
+      <span class="wr" id="hWr" data-tip="Win rate: closed trades that made money (all time on this wallet)">–</span><span class="cnt" id="hCnt" data-tip="Open positions">–</span>
+      <span class="mut" id="hExp" data-tip="Est. return if every open position is held to the end, weighted by its market win chance">–</span><span class="tot" id="hTot" data-tip="Total profit/loss: realized all time + open">–</span>
+    </div>
+  </div>
+</header>
 <div id="err"></div><div id="alerts"></div>
 <main>
-<section id="games"><h3>Games — live first</h3><div id="glist">loading…</div></section>
-<div class="col"><section><h3 id="mtitle">Pick a game</h3><div class="mk" id="mks"></div><div id="mview"></div></section>
-<section style="flex:0 0 32%"><h3>Orders (newest first)</h3><div id="ilist"></div></section></div>
-<section><h3>Positions — value (P&amp;L after exit fee)</h3><div id="plist">loading…</div></section>
+  <section class="panel" id="gamesPanel">
+    <div class="filters">
+      <div class="row"><input type="search" id="fq" placeholder="Search teams…"><button class="pill" id="fMine" data-tip="Only games you have a position in">★ Mine</button></div>
+      <div class="row" id="fSport"></div>
+      <div class="row">
+        <select id="fStatus"><option value="">All status</option><option value="live">Live</option><option value="upcoming">Upcoming</option><option value="past">Past</option></select>
+        <select id="fDate"><option value="today">Today</option><option value="tomorrow">Tomorrow</option><option value="">All dates</option></select>
+        <span class="mut" id="tzLab"></span>
+      </div>
+    </div>
+    <div id="glist">loading…</div>
+  </section>
+  <div class="col">
+    <section class="panel" id="mktPanel"><h3><span class="mtitle" id="mtitle">Pick a game</span></h3><div id="mgrid"></div><div id="ticket"></div></section>
+    <section class="panel" style="flex:0 0 34%"><h3>Orders · receipts (newest first)</h3><div id="ilist"></div></section>
+  </div>
+  <section class="panel"><h3>Positions</h3><div id="psum"></div><div id="plist">loading…</div></section>
 </main>
-<script>
-const $=s=>document.querySelector(s); let S={event:null,market:null,status:null,pf:null,lastOk:Date.now(),busy:{}};
-const money=v=>v==null?'–':(v<0?'-':'')+'$'+Math.abs(v).toFixed(2); const sg=v=>v==null?'':(v>=0?'+':'')+v.toFixed(2);
-const mult=p=>p?(1/p).toFixed(2)+'x':'–'; const c=p=>p==null?'–':(p*100).toFixed(1)+'¢';
-async function api(path,opt={},ms=6000){const ac=new AbortController();const t=setTimeout(()=>ac.abort(),ms);
-  try{const r=await fetch(path,{...opt,signal:ac.signal});const j=await r.json();S.lastOk=Date.now();if(/\/api\/t\/(book|games)/.test(path)){if(j&&(j.stale||j.error=='rate_limited'))S.mktStale=S.mktStale||Date.now();else if(j&&j.ok!==false)S.mktStale=0}return j}finally{clearTimeout(t)}}
-function err(m){const e=$('#err');if(!m){e.style.display='none';return}e.textContent=m;e.style.display='block'}
-async function status(){S.status=await api('/api/t/status');const st=S.status;
-  $('#env').textContent=st.env.toUpperCase();$('#env').className='badge '+(st.env=='production'?'live':'paper');
-  $('#ord').textContent='orders '+(st.tradable?'ON':'OFF');$('#ord').className='badge '+(st.tradable?'on':'off')}
-async function loadGames(){try{const g=await api('/api/t/games');if(!g.games)return false;S.gamesById=Object.fromEntries(g.games.map(x=>[x.eventId,x]));$('#glist').innerHTML=g.games.map(x=>{const m=x.money;
-  const q=m?m.outcomes.map(o=>`<span>${o.name} ${mult(o.ask)}</span>`).join(''):'<span class="mut">no moneyline</span>';
-  const ck=x.clock?`${x.clock.late?'<span class="late">Q4 ≤5:00</span> ':''}<span class="live-dot">● ${x.clock.detail||''}</span> ${x.clock.score||''}`:(x.status=='OPEN_INGAME'?'<span class="live-dot">● LIVE</span>':new Date(x.startsTs).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}));
-  return `<div class="g ${S.event==x.eventId?'sel':''}" onclick="pickEvent('${x.eventId}','${x.desc.replace(/'/g,'')}','${m?m.marketId:''}')"><div class="t">${x.desc}</div><div class="mut">${x.league} · ${ck}</div><div class="q">${q}</div></div>`}).join('')||'<div class="g mut">no games</div>';return !g.stale}catch(e){return false}}
-async function pickEvent(eid,desc,mid){S.event=eid;history.replaceState(null,'','#e='+eid);S.market=mid||null;$('#mtitle').textContent=desc;loadGames();
-  const r=await api('/api/t/event/'+eid);S.mkts=r.markets;if(!S.market&&r.markets.length)S.market=r.markets[0].marketId;drawMks();loadBook()}
-function drawMks(){$('#mks').innerHTML=(S.mkts||[]).slice(0,14).map(m=>`<button class="${m.marketId==S.market?'sel':''}" onclick="S.market='${m.marketId}';drawMks();loadBook()">${m.type}${m.strike&&m.strike!='0'?' '+m.strike:''}</button>`).join('')}
-async function loadBook(){if(!S.market)return true;try{const b=await api('/api/t/book/'+S.market,{},4000);if(b.marketId!=S.market)return !!b.outcomes&&!b.stale;S.book=b;
-  const off=!(S.status&&S.status.tradable);
-  $('#mview').innerHTML=`<div class="sides">${b.outcomes.map(o=>`<div class="side"><div class="nm">${o.name}</div>
-   <div class="big">${mult(o.ask)}</div><div class="ba"><span>ask ${c(o.ask)}</span><span>bid ${c(o.bid)}</span><span>last ${o.last?c(+o.last):'–'}</span></div>
-   <div class="btns">${[1,2,5,10].map(u=>{const w=buyWarn(o,u);return `<button class="btn ${w?'warn':''}" ${off?'disabled':''} ${w?`title="${w}"`:''} onclick="buy(this,'${o.outcomeId}',${u})">$${u}</button>`}).join('')}
-   <input id="cu-${o.outcomeId}" type="number" min="1" step="1" placeholder="$" style="width:52px"><button class="btn h" ${off?'disabled':''} onclick="buy(this,'${o.outcomeId}',+document.getElementById('cu-${o.outcomeId}').value)">Buy</button></div>
-   ${buyWarnLine(o)}
-   <table class="depth"><tr><th>bid</th><th>ctr</th><th>ask</th><th>ctr</th></tr>${[0,1,2,3,4].map(i=>{const bb=o.bids[i]||[],aa=o.asks[i]||[];return `<tr><td class="b">${bb[0]!=null?c(bb[0]):''}</td><td>${bb[1]||''}</td><td class="a">${aa[0]!=null?c(aa[0]):''}</td><td>${aa[1]||''}</td></tr>`}).join('')}</table>
-   </div>`).join('')}</div><div class="mut" style="padding:0 10px 8px">Buy = IOC limit at ask + max slip. Fee ≈ 6%·p·(1−p) per contract when live. ${b.status!='OPEN'?'<b class="dn">market '+b.status+'</b>':''}${b.stale?' <b class="dn">prices '+b.staleAge+'s old (rate limited)</b>':''}</div>`;return !b.stale}catch(e){return false}}
-// cash check for the buy ticket: Novig exits are buys of the other side and need cash up front.
-// Warning only - never blocks a buy. Pairs pay back $0.01 each as soon as they fill, so the app can still exit in chunks.
-function cashAfter(o,u){if(S.cash==null||!o.ask)return null;const a=o.ask,bd=o.bid||Math.max(0.01,a-0.03);
-  const left=S.cash-u-0.06*(1-a)*u, need=(S.exitAll||0)+(u/a)*(1-bd)*(1+0.06*bd);return {left,need}}
-function buyWarn(o,u){const r=cashAfter(o,u);if(!r||r.left>=r.need)return '';return `After this $${u} buy: cash ~$${Math.max(0,r.left).toFixed(2)}, exit-all-at-once needs ~$${r.need.toFixed(2)}`}
-function buyWarnLine(o){const bad=[1,2,5,10].filter(u=>buyWarn(o,u));if(!bad.length)return '';const r=cashAfter(o,bad[0]);
-  return `<div class="cw"><b>Cash warning:</b> a $${bad[0]}${bad.length>1?'+':''} buy leaves ~$${Math.max(0,r.left).toFixed(2)} cash, but selling everything in one go would need ~$${r.need.toFixed(2)}. You can still buy. Sells will go out in smaller chunks (each chunk frees cash), which is slower in a fast market.</div>`}
-function idem(){return (crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2))}
-async function send(btn,body){if(btn.classList.contains('pend'))return;btn.classList.add('pend');const key=idem();body.idem=key;body.slipCents=+$('#slip').value;
-  let r=null;for(let i=0;i<3&&!r;i++){try{r=await api('/api/t/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)},5000)}catch(e){await new Promise(z=>setTimeout(z,500))}}
-  btn.classList.remove('pend');if(!r){err('Server unreachable — order may not have been sent. Check Orders list.');return}
-  if(!r.ok){err((r.error||'')+': '+(r.message||''));setTimeout(()=>err(''),6000)}else{err('');S.fast=Date.now()+15000;loadIntents()}}
-function buy(btn,oid,usd){if(!usd||usd<=0)return;send(btn,{action:'BUY',marketId:S.market,outcomeId:oid,usd})}
-function sell(btn,mid,oid,half){send(btn,{action:half?'SELL_HALF':'SELL_ALL',marketId:mid,outcomeId:oid})}
-async function loadPf(){try{const p=await api('/api/t/portfolio',{},8000);if(!p.wallets)return false;S.pf=p;const tw=p.wallets.find(w=>w.tradable)||p.wallets[0];const cw=p.wallets.find(w=>w.tradable);S.cash=cw&&cw.cash!=null?cw.cash:null;S.exitAll=cw?cw.exitCashAll||0:0;
-  $('#dCash').innerHTML=S.cash==null?'–':(S.cash<S.exitAll?`<span class="dn" title="Exiting every position at once needs ~${money(S.exitAll)}">${money(S.cash)} (exit-all needs ${money(S.exitAll)})</span>`:money(S.cash));
-  if(tw){const d=tw.day;$('#dTot').innerHTML=`<span class="${d.total>=0?'up':'dn'}">${sg(d.total)}</span>`;$('#dReal').textContent=sg(d.realized);$('#dUn').textContent=sg(d.unrealized);$('#dFee').textContent=money(d.fees);
-   $('#dCap').innerHTML=d.lossCapHit?'<b class="dn">HIT — buys blocked</b>':'-$'+p.cfg.daily_loss_cap_usd+' · max $'+p.cfg.max_order_usd+'/order'}
-  const late=[];
-  $('#plist').innerHTML=p.wallets.map(w=>`<h3>${w.label}${w.error?' — <span class="dn">'+w.error+'</span>':''}</h3>`+(w.positions.map(x=>{
-    const g=(S.gamesById||{})[x.eventId];const lt=g&&g.clock&&g.clock.late;if(lt)late.push(x.side);
-    const held=x.openTs?Math.round((Date.now()-x.openTs)/60000)+'m':'';
-    return `<div class="pos"><div style="display:flex;justify-content:space-between"><b>${x.side} <span class="mut">${x.type}${x.strike&&x.strike!='0'?' '+x.strike:''} · ${x.market}</span></b>${lt?'<span class="late">FLATTEN: Q4 ≤5:00</span>':''}</div>
-     <div class="v">${money(x.value)} <span class="${(x.pnl||0)>=0?'up':'dn'}">(${x.pnl==null?'?':sg(x.pnl)})</span></div>
-     <div class="mut">${x.net} ctr · avg ${c(x.avg)} · basis ${money(x.basis)} incl fees · sell now ${c(x.bid)} · break-even ${c(x.breakEven)} · exit fee ${money(x.exitFee)} · fees paid ${money(x.feesPaid)} · held ${held}</div>
-     ${w.tradable&&x.exitCash!=null?`<div class="${S.cash!=null&&x.exitCash>S.cash?'cw':'mut'}">cash needed to exit at once ≈ ${money(x.exitCash)}${S.cash!=null?' · you have '+money(S.cash)+(x.exitCash>S.cash?' - SELL ALL will sell in chunks as cash frees up':''):''}</div>`:''}
-     <div class="btns">${w.tradable?`<button class="btn s" onclick="sell(this,'${x.marketId}','${x.sideId}',false)">SELL ALL</button><button class="btn h" onclick="sell(this,'${x.marketId}','${x.sideId}',true)">Sell half</button>`:'<span class="mut">read-only wallet (sell in Novig app)</span>'}</div></div>`}).join('')||'<div class="pos mut">flat</div>')).join('');
-  const a=$('#alerts');if(late.length){a.style.display='block';a.textContent='⚠ Q4 under 5:00 with open positions: '+late.join(', ')+' — held-to-end went 0-4 (-$83.80). Flatten?'}else a.style.display='none';return !p.wallets.some(w=>w.stale)}catch(e){return false}}
-async function loadIntents(){try{const r=await api('/api/t/intents?n=25');const busy=r.intents.some(i=>i&&['queued','working'].includes(i.status));if(busy)S.fast=Date.now()+5000;
-  $('#ilist').innerHTML=r.intents.filter(Boolean).map(i=>`<div class="it"><span class="chip ${i.status}">${i.status.toUpperCase()}</span> <b>${i.action}</b> ${i.action=='BUY'?'$'+i.usd:''} · ${i.message||''} <span class="mut">${new Date(i.created).toLocaleTimeString()}</span>
-   <details><summary>log</summary><pre style="white-space:pre-wrap;margin:2px 0">${i.log.join('\n')}</pre></details></div>`).join('')||'<div class="it mut">no orders yet</div>'}catch(e){}}
-$('#flatAll').onclick=async e=>{if(!confirm('Sell ALL open positions in the tradable wallet now?'))return;const r=await api('/api/t/flatten',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({batch:'flat-'+Date.now(),slipCents:Math.max(3,+$('#slip').value)})});S.fast=Date.now()+15000;loadIntents()};
-setInterval(()=>{const a=(Date.now()-S.lastOk)/1000,m=S.mktStale?(Date.now()-S.mktStale)/1000:0;const bad=a>6||m>4;$('#conn').style.background=bad?'var(--rd)':'var(--gr)';
-  $('#age').textContent=a>6?'server unreachable '+a.toFixed(0)+'s':(m>4?'prices stale '+m.toFixed(0)+'s (rate limited, backing off)':'')},1000);
-// adaptive polling: each loop backs off x2 (to a cap) while data is stale/rate-limited, resets on success; book only for the open market and visible tab
-function loop(fn,base,max){let d=base;const run=async()=>{let ok=true;if(!document.hidden){try{ok=await fn()}catch(e){ok=false}}d=ok===false?Math.min(max,d*2):base;setTimeout(run,d)};run()}
-status();loadGames().then(()=>{const m=location.hash.match(/e=([\w-]+)/);if(m&&S.gamesById&&S.gamesById[m[1]]){const g=S.gamesById[m[1]];pickEvent(g.eventId,g.desc,g.money&&g.money.marketId)}});
-setTimeout(()=>loop(loadGames,15000,60000),15000);loop(loadBook,1500,10000);loop(loadPf,3000,15000);
-setInterval(()=>{if((S.fast||0)>Date.now())loadIntents()},700);setInterval(loadIntents,4000);setInterval(status,30000);loadIntents();
-</script></body></html>
+<div id="toasts"></div>
+<div id="modal"><div class="box"><h4 id="mH"></h4><div id="mB"></div><div class="btns" style="justify-content:flex-end;margin-top:12px"><button class="btn h" id="mNo">Cancel</button><button class="btn" id="mYes">Confirm</button></div></div></div>
+<div id="pop"></div>
+<script src="trade.js?v=5"></script>
+</body></html>
