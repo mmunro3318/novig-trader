@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NOVIG · Functional Design System</title>
+<link rel="stylesheet" href="ds.css"></head><body>
+<header class="top"><div class="brand"><span class="logo">N</span> NOVIG <small>Functional Design System · v0.1</small></div>
+<nav><a href="#colors">Colors</a><a href="#type">Type</a><a href="#tokens">Primitives</a><a href="#w-account">Account</a><a href="#w-games">Games</a><a href="#w-market">Market</a><a href="#w-trade">Trade</a><a href="#w-activity">Activity</a><a href="#w-system">System</a><a href="#coverage">Coverage</a><a href="#demo" class="hi">Demo ▸</a></nav>
+<div id="conn" class="pill">connecting…</div></header>
+<main>
+<section class="hero"><h1>Widgets for every field Novig's API returns.</h1>
+<p>Each card below is a widget bound to an API contract (see <code>novig-cheatsheet.md</code>). The tag under each title lists the <b>endpoint → fields</b> it uses. Data badges: <span class="src live">LIVE</span> real response from the paper exchange or public API right now · <span class="src sample">SAMPLE</span> shaped exactly like the real response, shown because the live response is empty on a fresh paper account · <span class="src preview">PREVIEW</span> the request a form <i>would</i> send (nothing is ever sent).</p></section>
+
+<section id="colors"><h2 class="sec">01 · Color</h2><div class="swatches" id="swatches"></div></section>
+<section id="type"><h2 class="sec">02 · Typography</h2><div class="typo">
+<div><span class="t-display">-142</span><label>Display / odds · 44 mono</label></div>
+<div><span class="t-h1">Bears @ Seahawks</span><label>H1 · 24 / 650</label></div>
+<div><span class="t-h2">Moneyline · Spread · Total</span><label>H2 · 15 / 600 caps</label></div>
+<div><span class="t-body">Pregame orders rest; GOLIVE voids them.</span><label>Body · 14 / 400</label></div>
+<div><span class="t-num">$10,000.00000</span><label>Numeric · tabular mono</label></div>
+<div><span class="t-micro">GET /v3/account/balance → balance</span><label>Micro / contract tag · 11 mono</label></div></div></section>
+<section id="tokens"><h2 class="sec">03 · Primitives (atoms the widgets are built from)</h2><div class="row wrap" id="atoms"></div></section>
+
+<section id="w-account"><h2 class="sec">04 · Account widgets</h2><div class="grid" id="g-account"></div></section>
+<section id="w-games"><h2 class="sec">05 · Games &amp; discovery</h2><div class="grid" id="g-games"></div></section>
+<section id="w-market"><h2 class="sec">06 · Market depth, prices &amp; tape</h2><div class="grid" id="g-market"></div></section>
+<section id="w-trade"><h2 class="sec">07 · Trading actions (forms built from the request contracts)</h2><div class="grid" id="g-trade"></div></section>
+<section id="w-activity"><h2 class="sec">08 · Exchange activity (data.novig.com daily CSVs)</h2><div class="grid" id="g-activity"></div></section>
+<section id="w-system"><h2 class="sec">09 · System, keys, taxonomy, future sports</h2><div class="grid" id="g-system"></div></section>
+<section id="coverage"><h2 class="sec">10 · Field coverage: every contract field → the widget that shows it</h2><div id="cov"></div></section>
+
+<section id="demo"><h2 class="sec">11 · Demo: NOVIG / Football</h2>
+<div class="app"><aside class="app-l"><div id="d-acct"></div><div id="d-pos"></div></aside>
+<div class="app-c"><div class="toolbar"><input id="d-q" placeholder="Search team, matchup…  ( / )"><div id="d-chips" class="chips"></div><select id="d-status"><option value="">All statuses</option></select></div><div id="d-list"></div></div>
+<aside class="app-r"><div id="d-detail" class="w"><div class="empty">Pick a game →</div></div><div id="d-ticket"></div></aside></div></section>
+</main>
+<div id="toast"></div>
+<script src="ds.js"></script></body></html>

@@ -1,0 +1,1271 @@
+{
+ "GET /v3/public/catalog/events": {
+  "method": "GET",
+  "path": "/v3/public/catalog/events",
+  "auth": "none",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "next",
+    "items",
+    "items[].description",
+    "items[].eventId",
+    "items[].league",
+    "items[].sport",
+    "items[].startsTs",
+    "items[].status"
+   ]
+  }
+ },
+ "GET /v3/public/catalog/events/{id}": {
+  "method": "GET",
+  "path": "/v3/public/catalog/events/{id}",
+  "auth": "none",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "description",
+    "eventId",
+    "league",
+    "sport",
+    "startsTs",
+    "status"
+   ]
+  }
+ },
+ "GET /v3/public/catalog/markets": {
+  "method": "GET",
+  "path": "/v3/public/catalog/markets",
+  "auth": "none",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "next",
+    "items",
+    "items[].description",
+    "items[].eventId",
+    "items[].fee",
+    "items[].fee.charged",
+    "items[].fee.coefficient",
+    "items[].fee.makerCredit",
+    "items[].marketId",
+    "items[].marketType",
+    "items[].openInterest",
+    "items[].outcomes",
+    "items[].outcomes[].bid",
+    "items[].outcomes[].bid.price",
+    "items[].outcomes[].bid.qty",
+    "items[].outcomes[].last",
+    "items[].outcomes[].name",
+    "items[].outcomes[].outcomeId",
+    "items[].outcomes[].status",
+    "items[].startsTs",
+    "items[].status",
+    "items[].strike",
+    "items[].voids",
+    "items[].volume"
+   ]
+  }
+ },
+ "GET /v3/public/catalog/markets/{id}": {
+  "method": "GET",
+  "path": "/v3/public/catalog/markets/{id}",
+  "auth": "none",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "description",
+    "eventId",
+    "fee",
+    "fee.charged",
+    "fee.coefficient",
+    "fee.makerCredit",
+    "marketId",
+    "marketType",
+    "openInterest",
+    "outcomes",
+    "outcomes[].bid",
+    "outcomes[].bid.price",
+    "outcomes[].bid.qty",
+    "outcomes[].last",
+    "outcomes[].name",
+    "outcomes[].outcomeId",
+    "outcomes[].status",
+    "startsTs",
+    "status",
+    "strike",
+    "voids",
+    "volume"
+   ]
+  }
+ },
+ "GET /v3/public/catalog/markets/{id}/book": {
+  "method": "GET",
+  "path": "/v3/public/catalog/markets/{id}/book",
+  "auth": "none",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "marketId",
+    "orders",
+    "orders{key}",
+    "orders{key}[].orderId",
+    "orders{key}[].price",
+    "orders{key}[].qty",
+    "seq"
+   ]
+  }
+ },
+ "GET /v3/public/catalog/markets/{id}/trades": {
+  "method": "GET",
+  "path": "/v3/public/catalog/markets/{id}/trades",
+  "auth": "none",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "next",
+    "items",
+    "items[].outcomeId",
+    "items[].price",
+    "items[].qty",
+    "items[].takeId",
+    "items[].tradeId",
+    "items[].ts"
+   ]
+  }
+ },
+ "GET /v3/public/types/event-statuses": {
+  "method": "GET",
+  "path": "/v3/public/types/event-statuses",
+  "auth": "none",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": []
+  }
+ },
+ "GET /v3/public/types/leagues": {
+  "method": "GET",
+  "path": "/v3/public/types/leagues",
+  "auth": "none",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": []
+  }
+ },
+ "GET /v3/public/types/markets": {
+  "method": "GET",
+  "path": "/v3/public/types/markets",
+  "auth": "none",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": []
+  }
+ },
+ "GET /v3/public/types/markets/live": {
+  "method": "GET",
+  "path": "/v3/public/types/markets/live",
+  "auth": "none",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "{key}"
+   ]
+  }
+ },
+ "GET /v3/public/types/sports": {
+  "method": "GET",
+  "path": "/v3/public/types/sports",
+  "auth": "none",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": []
+  }
+ },
+ "GET /v3/types/event-statuses": {
+  "method": "GET",
+  "path": "/v3/types/event-statuses",
+  "auth": "`any`",
+  "live": false,
+  "request": [],
+  "responses": {
+   "200": []
+  }
+ },
+ "GET /v3/types/leagues": {
+  "method": "GET",
+  "path": "/v3/types/leagues",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": []
+  }
+ },
+ "GET /v3/types/markets": {
+  "method": "GET",
+  "path": "/v3/types/markets",
+  "auth": "`any`",
+  "live": false,
+  "request": [],
+  "responses": {
+   "200": []
+  }
+ },
+ "GET /v3/types/markets/live": {
+  "method": "GET",
+  "path": "/v3/types/markets/live",
+  "auth": "`any`",
+  "live": false,
+  "request": [],
+  "responses": {
+   "200": [
+    "{key}"
+   ]
+  }
+ },
+ "GET /v3/types/sports": {
+  "method": "GET",
+  "path": "/v3/types/sports",
+  "auth": "`any`",
+  "live": false,
+  "request": [],
+  "responses": {
+   "200": []
+  }
+ },
+ "GET /v3/catalog/consensus": {
+  "method": "GET",
+  "path": "/v3/catalog/consensus",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "next",
+    "items",
+    "items[].competitorId",
+    "items[].eventId",
+    "items[].marketId",
+    "items[].marketType",
+    "items[].playerId"
+   ]
+  }
+ },
+ "GET /v3/catalog/events": {
+  "method": "GET",
+  "path": "/v3/catalog/events",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "next",
+    "items",
+    "items[].description",
+    "items[].eventId",
+    "items[].league",
+    "items[].sport",
+    "items[].startsTs",
+    "items[].status"
+   ]
+  }
+ },
+ "GET /v3/catalog/events/{id}": {
+  "method": "GET",
+  "path": "/v3/catalog/events/{id}",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "description",
+    "eventId",
+    "league",
+    "sport",
+    "startsTs",
+    "status"
+   ]
+  }
+ },
+ "GET /v3/catalog/markets": {
+  "method": "GET",
+  "path": "/v3/catalog/markets",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "next",
+    "items",
+    "items[].description",
+    "items[].eventId",
+    "items[].fee",
+    "items[].fee.charged",
+    "items[].fee.coefficient",
+    "items[].fee.makerCredit",
+    "items[].marketId",
+    "items[].marketType",
+    "items[].openInterest",
+    "items[].outcomes",
+    "items[].outcomes[].bid",
+    "items[].outcomes[].bid.price",
+    "items[].outcomes[].bid.qty",
+    "items[].outcomes[].last",
+    "items[].outcomes[].name",
+    "items[].outcomes[].outcomeId",
+    "items[].outcomes[].status",
+    "items[].startsTs",
+    "items[].status",
+    "items[].strike",
+    "items[].voids",
+    "items[].volume"
+   ]
+  }
+ },
+ "GET /v3/catalog/markets/{id}": {
+  "method": "GET",
+  "path": "/v3/catalog/markets/{id}",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "description",
+    "eventId",
+    "fee",
+    "fee.charged",
+    "fee.coefficient",
+    "fee.makerCredit",
+    "marketId",
+    "marketType",
+    "openInterest",
+    "outcomes",
+    "outcomes[].bid",
+    "outcomes[].bid.price",
+    "outcomes[].bid.qty",
+    "outcomes[].last",
+    "outcomes[].name",
+    "outcomes[].outcomeId",
+    "outcomes[].status",
+    "startsTs",
+    "status",
+    "strike",
+    "voids",
+    "volume"
+   ]
+  }
+ },
+ "GET /v3/catalog/markets/{id}/book": {
+  "method": "GET",
+  "path": "/v3/catalog/markets/{id}/book",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "marketId",
+    "orders",
+    "orders{key}",
+    "orders{key}[].orderId",
+    "orders{key}[].price",
+    "orders{key}[].qty",
+    "seq"
+   ]
+  }
+ },
+ "GET /v3/catalog/markets/{id}/trades": {
+  "method": "GET",
+  "path": "/v3/catalog/markets/{id}/trades",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "next",
+    "items",
+    "items[].outcomeId",
+    "items[].price",
+    "items[].qty",
+    "items[].takeId",
+    "items[].tradeId",
+    "items[].ts"
+   ]
+  }
+ },
+ "GET /v3/catalog/participants": {
+  "method": "GET",
+  "path": "/v3/catalog/participants",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "next",
+    "items",
+    "items[].awayCompetitorId",
+    "items[].competitors",
+    "items[].competitors[].competitorId",
+    "items[].competitors[].marketIds",
+    "items[].competitors[].name",
+    "items[].competitors[].shortName",
+    "items[].competitors[].symbol",
+    "items[].eventId",
+    "items[].homeCompetitorId",
+    "items[].players",
+    "items[].players[].competitorId",
+    "items[].players[].marketIds",
+    "items[].players[].name",
+    "items[].players[].playerId",
+    "items[].players[].position"
+   ]
+  }
+ },
+ "GET /v3/history/events": {
+  "method": "GET",
+  "path": "/v3/history/events",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "next",
+    "items",
+    "items[].description",
+    "items[].eventId",
+    "items[].league",
+    "items[].sport",
+    "items[].startsTs",
+    "items[].status"
+   ]
+  }
+ },
+ "GET /v3/history/events/{id}": {
+  "method": "GET",
+  "path": "/v3/history/events/{id}",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "description",
+    "eventId",
+    "league",
+    "sport",
+    "startsTs",
+    "status"
+   ]
+  }
+ },
+ "GET /v3/history/markets": {
+  "method": "GET",
+  "path": "/v3/history/markets",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "next",
+    "items",
+    "items[].description",
+    "items[].eventId",
+    "items[].fee",
+    "items[].fee.charged",
+    "items[].fee.coefficient",
+    "items[].fee.makerCredit",
+    "items[].marketId",
+    "items[].marketType",
+    "items[].outcomes",
+    "items[].outcomes[].bid",
+    "items[].outcomes[].bid.price",
+    "items[].outcomes[].bid.qty",
+    "items[].outcomes[].last",
+    "items[].outcomes[].name",
+    "items[].outcomes[].outcomeId",
+    "items[].outcomes[].status",
+    "items[].settledTs",
+    "items[].status",
+    "items[].strike",
+    "items[].voids"
+   ]
+  }
+ },
+ "GET /v3/history/markets/{id}": {
+  "method": "GET",
+  "path": "/v3/history/markets/{id}",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "description",
+    "eventId",
+    "fee",
+    "fee.charged",
+    "fee.coefficient",
+    "fee.makerCredit",
+    "marketId",
+    "marketType",
+    "outcomes",
+    "outcomes[].bid",
+    "outcomes[].bid.price",
+    "outcomes[].bid.qty",
+    "outcomes[].last",
+    "outcomes[].name",
+    "outcomes[].outcomeId",
+    "outcomes[].status",
+    "settledTs",
+    "status",
+    "strike",
+    "voids"
+   ]
+  }
+ },
+ "GET /v3/history/markets/{id}/candles": {
+  "method": "GET",
+  "path": "/v3/history/markets/{id}/candles",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "interval",
+    "marketId",
+    "series",
+    "series[].candles",
+    "series[].candles[].c",
+    "series[].candles[].h",
+    "series[].candles[].l",
+    "series[].candles[].o",
+    "series[].candles[].t",
+    "series[].candles[].volume",
+    "series[].outcomeId"
+   ]
+  }
+ },
+ "GET /v3/history/positions": {
+  "method": "GET",
+  "path": "/v3/history/positions",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "next",
+    "items",
+    "items[].cost",
+    "items[].marketId",
+    "items[].outcomeId",
+    "items[].payout",
+    "items[].pnl",
+    "items[].positionId",
+    "items[].qty",
+    "items[].resettled",
+    "items[].result",
+    "items[].settledTs",
+    "items[].status",
+    "{key}",
+    "{key}.next",
+    "{key}.items",
+    "{key}.items[].cost",
+    "{key}.items[].marketId",
+    "{key}.items[].outcomeId",
+    "{key}.items[].payout",
+    "{key}.items[].pnl",
+    "{key}.items[].positionId",
+    "{key}.items[].qty",
+    "{key}.items[].resettled",
+    "{key}.items[].result",
+    "{key}.items[].settledTs",
+    "{key}.items[].status"
+   ]
+  }
+ },
+ "GET /v3/history/positions/{id}": {
+  "method": "GET",
+  "path": "/v3/history/positions/{id}",
+  "auth": "`any`",
+  "live": false,
+  "request": [],
+  "responses": {
+   "200": [
+    "cost",
+    "marketId",
+    "outcomeId",
+    "payout",
+    "pnl",
+    "positionId",
+    "qty",
+    "resettled",
+    "result",
+    "settledTs",
+    "status",
+    "{key}",
+    "{key}.cost",
+    "{key}.marketId",
+    "{key}.outcomeId",
+    "{key}.payout",
+    "{key}.pnl",
+    "{key}.positionId",
+    "{key}.qty",
+    "{key}.resettled",
+    "{key}.result",
+    "{key}.settledTs",
+    "{key}.status"
+   ]
+  }
+ },
+ "GET /v3/history/trades": {
+  "method": "GET",
+  "path": "/v3/history/trades",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "next",
+    "items",
+    "items[].makeIds",
+    "items[].marketId",
+    "items[].outcomeId",
+    "items[].price",
+    "items[].qty",
+    "items[].tradeId",
+    "items[].ts"
+   ]
+  }
+ },
+ "GET /v3/exchange/status": {
+  "method": "GET",
+  "path": "/v3/exchange/status",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "reason",
+    "trading"
+   ]
+  }
+ },
+ "GET /v3/time": {
+  "method": "GET",
+  "path": "/v3/time",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "ts"
+   ]
+  }
+ },
+ "POST /v3/echo": {
+  "method": "POST",
+  "path": "/v3/echo",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {}
+ },
+ "GET /v3/limits": {
+  "method": "GET",
+  "path": "/v3/limits",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "account",
+    "account.capacity",
+    "account.refillPerSec",
+    "cancel",
+    "cancel.capacity",
+    "cancel.refillPerSec",
+    "history",
+    "history.capacity",
+    "history.refillPerSec",
+    "maxWatchedMarkets",
+    "place",
+    "place.capacity",
+    "place.refillPerSec",
+    "read",
+    "read.capacity",
+    "read.refillPerSec",
+    "stream",
+    "stream.capacity",
+    "stream.refillPerSec"
+   ]
+  }
+ },
+ "GET /v3/keys": {
+  "method": "GET",
+  "path": "/v3/keys",
+  "auth": "`management` `management::read`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "[].algorithm",
+    "[].createdAt",
+    "[].expiresAt",
+    "[].fingerprint",
+    "[].keyId",
+    "[].lastUsedAt",
+    "[].name",
+    "[].restriction",
+    "[].scope"
+   ]
+  }
+ },
+ "POST /v3/keys": {
+  "method": "POST",
+  "path": "/v3/keys",
+  "auth": "`management`",
+  "live": false,
+  "request": [
+   "algorithm",
+   "expiresAt",
+   "name",
+   "publicKey"
+  ],
+  "responses": {
+   "201": [
+    "fingerprint",
+    "keyId"
+   ]
+  }
+ },
+ "DELETE /v3/keys/{id}": {
+  "method": "DELETE",
+  "path": "/v3/keys/{id}",
+  "auth": "`management`",
+  "live": false,
+  "request": [],
+  "responses": {}
+ },
+ "GET /v3/keys/{id}": {
+  "method": "GET",
+  "path": "/v3/keys/{id}",
+  "auth": "`management` `management::read`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "algorithm",
+    "createdAt",
+    "expiresAt",
+    "fingerprint",
+    "keyId",
+    "lastUsedAt",
+    "name",
+    "restriction",
+    "scope"
+   ]
+  }
+ },
+ "GET /v3/account/balance": {
+  "method": "GET",
+  "path": "/v3/account/balance",
+  "auth": "`management` `management::read`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "balance"
+   ]
+  }
+ },
+ "GET /v3/account/orders": {
+  "method": "GET",
+  "path": "/v3/account/orders",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "open",
+    "open[].clientId",
+    "open[].expiresAt",
+    "open[].marketId",
+    "open[].orderId",
+    "open[].outcomeId",
+    "open[].price",
+    "open[].qty",
+    "open[].tif",
+    "seq",
+    "{key}",
+    "{key}.open",
+    "{key}.open[].clientId",
+    "{key}.open[].expiresAt",
+    "{key}.open[].marketId",
+    "{key}.open[].orderId",
+    "{key}.open[].outcomeId",
+    "{key}.open[].price",
+    "{key}.open[].qty",
+    "{key}.open[].tif",
+    "{key}.seq"
+   ]
+  }
+ },
+ "GET /v3/account/positions": {
+  "method": "GET",
+  "path": "/v3/account/positions",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "positions",
+    "positions[].cost",
+    "positions[].marketId",
+    "positions[].outcomeId",
+    "positions[].qty",
+    "seq",
+    "{key}",
+    "{key}.positions",
+    "{key}.positions[].cost",
+    "{key}.positions[].marketId",
+    "{key}.positions[].outcomeId",
+    "{key}.positions[].qty",
+    "{key}.seq"
+   ]
+  }
+ },
+ "GET /v3/account/subaccounts": {
+  "method": "GET",
+  "path": "/v3/account/subaccounts",
+  "auth": "`management` `management::read`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "[].balance",
+    "[].keyId",
+    "[].label"
+   ]
+  }
+ },
+ "POST /v3/account/subaccounts": {
+  "method": "POST",
+  "path": "/v3/account/subaccounts",
+  "auth": "`management`",
+  "live": false,
+  "request": [
+   "algorithm",
+   "expiresAt",
+   "label",
+   "publicKey"
+  ],
+  "responses": {
+   "201": [
+    "balance",
+    "keyId",
+    "label"
+   ]
+  }
+ },
+ "PATCH /v3/account/subaccounts/{keyId}": {
+  "method": "PATCH",
+  "path": "/v3/account/subaccounts/{keyId}",
+  "auth": "`management`",
+  "live": false,
+  "request": [
+   "label"
+  ],
+  "responses": {
+   "200": [
+    "balance",
+    "keyId",
+    "label"
+   ]
+  }
+ },
+ "GET /v3/account/subaccounts/{keyId}/balance": {
+  "method": "GET",
+  "path": "/v3/account/subaccounts/{keyId}/balance",
+  "auth": "`any`",
+  "live": false,
+  "request": [],
+  "responses": {
+   "200": [
+    "balance",
+    "keyId"
+   ]
+  }
+ },
+ "POST /v3/account/subaccounts/{keyId}/keys": {
+  "method": "POST",
+  "path": "/v3/account/subaccounts/{keyId}/keys",
+  "auth": "`management`",
+  "live": false,
+  "request": [
+   "algorithm",
+   "expiresAt",
+   "name",
+   "publicKey",
+   "scope"
+  ],
+  "responses": {
+   "201": [
+    "fingerprint",
+    "keyId"
+   ]
+  }
+ },
+ "GET /v3/account/subaccounts/{keyId}/transactions": {
+  "method": "GET",
+  "path": "/v3/account/subaccounts/{keyId}/transactions",
+  "auth": "`any`",
+  "live": false,
+  "request": [],
+  "responses": {
+   "200": [
+    "next",
+    "items",
+    "items[].amount",
+    "items[].kind",
+    "items[].ref",
+    "items[].transactionId",
+    "items[].ts"
+   ]
+  }
+ },
+ "POST /v3/account/subaccounts/{keyId}/transfer": {
+  "method": "POST",
+  "path": "/v3/account/subaccounts/{keyId}/transfer",
+  "auth": "`management`",
+  "live": false,
+  "request": [
+   "amount",
+   "clientTransferId",
+   "direction"
+  ],
+  "responses": {
+   "202": [
+    "actualBalance",
+    "amount",
+    "clientTransferId",
+    "createdAt",
+    "direction",
+    "status",
+    "transferId",
+    "updatedAt"
+   ]
+  }
+ },
+ "GET /v3/account/subaccounts/{keyId}/transfers/{id}": {
+  "method": "GET",
+  "path": "/v3/account/subaccounts/{keyId}/transfers/{id}",
+  "auth": "`management` `management::read`",
+  "live": false,
+  "request": [],
+  "responses": {
+   "200": [
+    "actualBalance",
+    "amount",
+    "clientTransferId",
+    "createdAt",
+    "direction",
+    "status",
+    "transferId",
+    "updatedAt"
+   ]
+  }
+ },
+ "GET /v3/account/transactions": {
+  "method": "GET",
+  "path": "/v3/account/transactions",
+  "auth": "`management` `management::read`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "next",
+    "items",
+    "items[].amount",
+    "items[].kind",
+    "items[].ref",
+    "items[].transactionId",
+    "items[].ts"
+   ]
+  }
+ },
+ "GET /v3/account/transfers": {
+  "method": "GET",
+  "path": "/v3/account/transfers",
+  "auth": "`management` `management::read`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "next",
+    "items",
+    "items[].actualBalance",
+    "items[].amount",
+    "items[].clientTransferId",
+    "items[].createdAt",
+    "items[].direction",
+    "items[].status",
+    "items[].transferId",
+    "items[].updatedAt",
+    "items[].subaccountKeyId"
+   ]
+  }
+ },
+ "GET /v3/account/transfers/{id}": {
+  "method": "GET",
+  "path": "/v3/account/transfers/{id}",
+  "auth": "`management` `management::read`",
+  "live": false,
+  "request": [],
+  "responses": {
+   "200": [
+    "actualBalance",
+    "amount",
+    "clientTransferId",
+    "createdAt",
+    "direction",
+    "status",
+    "transferId",
+    "updatedAt",
+    "subaccountKeyId"
+   ]
+  }
+ },
+ "DELETE /v3/orders": {
+  "method": "DELETE",
+  "path": "/v3/orders",
+  "auth": "`trading`",
+  "live": false,
+  "request": [],
+  "responses": {
+   "200": [
+    "canceled"
+   ]
+  }
+ },
+ "GET /v3/orders": {
+  "method": "GET",
+  "path": "/v3/orders",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "next",
+    "items",
+    "items[].clientId",
+    "items[].createdTs",
+    "items[].expiresTs",
+    "items[].marketId",
+    "items[].orderId",
+    "items[].outcomeId",
+    "items[].price",
+    "items[].qty",
+    "items[].remaining",
+    "items[].status",
+    "items[].tif",
+    "{key}",
+    "{key}.next",
+    "{key}.items",
+    "{key}.items[].clientId",
+    "{key}.items[].createdTs",
+    "{key}.items[].expiresTs",
+    "{key}.items[].marketId",
+    "{key}.items[].orderId",
+    "{key}.items[].outcomeId",
+    "{key}.items[].price",
+    "{key}.items[].qty",
+    "{key}.items[].remaining",
+    "{key}.items[].status",
+    "{key}.items[].tif"
+   ]
+  }
+ },
+ "POST /v3/orders": {
+  "method": "POST",
+  "path": "/v3/orders",
+  "auth": "`trading`",
+  "live": false,
+  "request": [
+   "clientId",
+   "outcomeId",
+   "price",
+   "qty",
+   "tif",
+   "ttl"
+  ],
+  "responses": {
+   "201": [
+    "clientId",
+    "orderId"
+   ]
+  }
+ },
+ "DELETE /v3/orders/batch": {
+  "method": "DELETE",
+  "path": "/v3/orders/batch",
+  "auth": "`trading`",
+  "live": false,
+  "request": [
+   "orderIds"
+  ],
+  "responses": {
+   "200": [
+    "canceled",
+    "notCanceled",
+    "notCanceled[].orderId",
+    "notCanceled[].reason"
+   ],
+   "207": [
+    "canceled",
+    "notCanceled",
+    "notCanceled[].orderId",
+    "notCanceled[].reason"
+   ]
+  }
+ },
+ "POST /v3/orders/batch": {
+  "method": "POST",
+  "path": "/v3/orders/batch",
+  "auth": "`trading`",
+  "live": false,
+  "request": [
+   "orders",
+   "orders[].clientId",
+   "orders[].outcomeId",
+   "orders[].price",
+   "orders[].qty",
+   "orders[].tif",
+   "orders[].ttl"
+  ],
+  "responses": {
+   "201": [
+    "[].clientId",
+    "[].orderId"
+   ]
+  }
+ },
+ "DELETE /v3/orders/{id}": {
+  "method": "DELETE",
+  "path": "/v3/orders/{id}",
+  "auth": "`trading`",
+  "live": false,
+  "request": [],
+  "responses": {
+   "200": [
+    "orderId",
+    "status"
+   ]
+  }
+ },
+ "GET /v3/orders/{id}": {
+  "method": "GET",
+  "path": "/v3/orders/{id}",
+  "auth": "`any`",
+  "live": false,
+  "request": [],
+  "responses": {
+   "200": [
+    "clientId",
+    "createdTs",
+    "expiresTs",
+    "marketId",
+    "orderId",
+    "outcomeId",
+    "price",
+    "qty",
+    "remaining",
+    "status",
+    "tif",
+    "{key}",
+    "{key}.clientId",
+    "{key}.createdTs",
+    "{key}.expiresTs",
+    "{key}.marketId",
+    "{key}.orderId",
+    "{key}.outcomeId",
+    "{key}.price",
+    "{key}.qty",
+    "{key}.remaining",
+    "{key}.status",
+    "{key}.tif"
+   ]
+  }
+ },
+ "GET /v3/portfolio/fills": {
+  "method": "GET",
+  "path": "/v3/portfolio/fills",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "next",
+    "items",
+    "items[].clientId",
+    "items[].cost",
+    "items[].fee",
+    "items[].fillId",
+    "items[].marketId",
+    "items[].orderId",
+    "items[].outcomeId",
+    "items[].qty",
+    "items[].taker",
+    "items[].ts",
+    "{key}",
+    "{key}.next",
+    "{key}.items",
+    "{key}.items[].clientId",
+    "{key}.items[].cost",
+    "{key}.items[].fee",
+    "{key}.items[].fillId",
+    "{key}.items[].marketId",
+    "{key}.items[].orderId",
+    "{key}.items[].outcomeId",
+    "{key}.items[].qty",
+    "{key}.items[].taker",
+    "{key}.items[].ts"
+   ]
+  }
+ },
+ "GET /v3/portfolio/positions": {
+  "method": "GET",
+  "path": "/v3/portfolio/positions",
+  "auth": "`any`",
+  "live": true,
+  "request": [],
+  "responses": {
+   "200": [
+    "[].cost",
+    "[].marketId",
+    "[].outcomeId",
+    "[].qty",
+    "{key}",
+    "{key}[].cost",
+    "{key}[].marketId",
+    "{key}[].outcomeId",
+    "{key}[].qty"
+   ]
+  }
+ },
+ "GET /v3/ws": {
+  "method": "GET",
+  "path": "/v3/ws",
+  "auth": "`trading` `trading::read`",
+  "live": false,
+  "request": [],
+  "responses": {}
+ }
+}

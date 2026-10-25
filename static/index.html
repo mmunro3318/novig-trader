@@ -1,0 +1,16 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>novig/clean</title><link rel="icon" href="assets/logo-mark.svg"><link rel="stylesheet" href="app.css"></head>
+<body><div class="app">
+<header class="top"><a href="#/games"><img class="logo" src="assets/logo.svg" alt="novig/clean"></a>
+  <label class="search"><img src="assets/ic-search.svg" alt=""><input id="q" placeholder="Search teams, leagues…" autocomplete="off"><span class="kbd">/</span></label>
+  <span class="grow"></span><span class="badge dry" title="Orders are previewed + journaled, never sent">dry-run</span>
+  <div style="text-align:right"><div class="micro">sub-account</div><b id="bal" class="num">—</b></div>
+  <button id="fmtChip" class="chip" title="Price format (click to cycle)">—</button></header>
+<nav class="rail">
+  <a href="#/games" data-r="games"><img src="assets/ic-games.svg">Games</a><a href="#/positions" data-r="positions"><img src="assets/ic-positions.svg">Positions</a>
+  <a href="#/journal" data-r="journal"><img src="assets/ic-journal.svg">Journal</a><a href="#/account" data-r="account"><img src="assets/ic-account.svg">Account</a>
+  <a href="#/settings" data-r="settings"><img src="assets/ic-settings.svg">Settings</a><a href="system.html"><img src="assets/ic-system.svg">Design system</a>
+  <div class="foot">Paper exchange · prototype v0.2<br><a href="functional.html">functional widgets (v0.1)</a></div></nav>
+<main class="main" id="main"></main></div>
+<aside class="slip" id="slip"></aside><div class="toasts" id="toasts"></div><div class="notch-tip" id="tip"></div>
+<script src="app.js"></script></body></html>

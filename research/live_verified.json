@@ -1,0 +1,259 @@
+{
+ "/v3/public/types/sports": [
+  "FOOTBALL",
+  "BASKETBALL",
+  "BASEBALL",
+  "ICE_HOCKEY",
+  "SOCCER",
+  "TENNIS",
+  "BOXING",
+  "MIXED_MARTIAL_ARTS",
+  "GOLF",
+  "ENTERTAINMENT",
+  "ESPORTS",
+  "MOTORSPORTS"
+ ],
+ "/v3/public/types/leagues": [
+  "NFL",
+  "NBA",
+  "MLB",
+  "NHL",
+  "NCAAF",
+  "NCAAB",
+  "NCAAWB",
+  "NCAABSB",
+  "WNBA",
+  "UFC",
+  "Boxing",
+  "CFL",
+  "MLS",
+  "FIFA Club World Cup",
+  "EPL",
+  "Bundesliga",
+  "Serie A",
+  "La Liga",
+  "Liga MX",
+  "Ligue 1",
+  "Champions League",
+  "Europa League",
+  "WTA",
+  "ATP",
+  "PGA",
+  "TGL",
+  "League of Legends",
+  "Counter Strike 2",
+  "Dota 2",
+  "WBC",
+  "FIFA World Cup",
+  "Olympics Hockey Men",
+  "KBO",
+  "NPB",
+  "UEFA Nations League",
+  "F1",
+  "NASCAR",
+  "ENTERTAINMENT"
+ ],
+ "/v3/public/types/markets": [
+  "CUSTOM",
+  "MONEY",
+  "SPREAD",
+  "TOTAL",
+  "1X2",
+  "MONEYLINE_3_WAY_WIN",
+  "MONEYLINE_3_WAY_DRAW",
+  "TO_ADVANCE",
+  "TEAM_TOTAL",
+  "MONEY_1H",
+  "SPREAD_1H",
+  "TOTAL_1H",
+  "TOUCHDOWNS",
+  "SAVES",
+  "PASSING_TOUCHDOWNS"
+ ],
+ "/v3/public/types/markets/live": {
+  "ATP": [
+   "MONEY",
+   "SPREAD",
+   "TOTAL",
+   "MONEYLINE_3_WAY_WIN",
+   "MONEYLINE_3_WAY_DRAW",
+   "TO_ADVANCE",
+   "TEAM_TOTAL"
+  ],
+  "Boxing": [
+   "MONEY",
+   "SPREAD",
+   "TOTAL",
+   "MONEYLINE_3_WAY_WIN",
+   "MONEYLINE_3_WAY_DRAW",
+   "TO_ADVANCE",
+   "TEAM_TOTAL",
+   "GO_THE_DISTANCE",
+   "VICTORY_BY_KO_KTO_OR_DQ",
+   "VICTORY_BY_DECISION",
+   "DRAW"
+  ],
+  "Bundesliga": [
+   "MONEY",
+   "SPREAD",
+   "TOTAL",
+   "MONEYLINE_3_WAY_WIN",
+   "MONEYLINE_3_WAY_DRAW",
+   "TO_ADVANCE",
+   "TEAM_TOTAL"
+  ]
+ },
+ "/v3/public/types/event-statuses": [
+  "OPEN_PREGAME",
+  "CLOSED_PREGAME",
+  "OPEN_INGAME",
+  "SETTLED",
+  "FINAL",
+  "DELAYED",
+  "CANCELED"
+ ],
+ "/v3/public/catalog/events": {
+  "items": [
+   {
+    "eventId": "01a1479d-3394-7412-ad19-3f8914667186",
+    "description": "North Dakota State @ New Mexico",
+    "sport": "FOOTBALL",
+    "league": "NCAAF",
+    "status": "OPEN_PREGAME",
+    "startsTs": 1792893600000
+   },
+   {
+    "eventId": "01a1472f-3e91-7fe1-ab47-ceb061cab6e3",
+    "description": "UTSA @ Tulane",
+    "sport": "FOOTBALL",
+    "league": "NCAAF",
+    "status": "OPEN_PREGAME",
+    "startsTs": 1792886400000
+   }
+  ],
+  "next": null
+ },
+ "/v3/public/catalog/events/{id}": {
+  "eventId": "01a1479d-3394-7412-ad19-3f8914667186",
+  "description": "North Dakota State @ New Mexico",
+  "sport": "FOOTBALL",
+  "league": "NCAAF",
+  "status": "OPEN_PREGAME",
+  "startsTs": 1792893600000
+ },
+ "/v3/public/catalog/markets": {
+  "items": [
+   {
+    "marketId": "01a15f6e-5461-7ad3-a621-abf1f7c112ec",
+    "description": "TAMC",
+    "eventId": "01a146f8-472f-7b12-8ecc-845187bf4f73",
+    "marketType": "MONEY",
+    "strike": "0",
+    "status": "OPEN",
+    "voids": "FMV",
+    "startsTs": 1792882800000,
+    "fee": {
+     "coefficient": "0.06",
+     "makerCredit": "0.25",
+     "charged": "WHEN_LIVE"
+    },
+    "outcomes": [
+     {
+      "outcomeId": "01a15f6e-5461-7ad3-a621-ac0e901444eb",
+      "name": "TAMC",
+      "status": "TBD",
+      "bid": {
+       "price": "0.515",
+       "qty": 68200
+      }
+     },
+     {
+      "outcomeId": "01a15f6e-5461-7ad3-a621-ac193c9aeb70",
+      "name": "PV",
+      "status": "TBD",
+      "bid": {
+       "price": "0.001",
+       "qty": 5000
+      }
+     }
+    ],
+    "volume": 0,
+    "openInterest": 0
+   }
+  ],
+  "next": "01a15f61-a98a-7de2-9129-a4d9c9345bb3"
+ },
+ "/v3/public/catalog/markets/{id}/book": {
+  "marketId": "01a15f6e-520d-7822-8cca-cda862382611",
+  "seq": 94,
+  "orders": {
+   "01a15f6e-520d-7822-8cca-cdb29b0d96fe": [
+    {
+     "orderId": "01a16298-8a15-7e10-9f4f-654ea5f2dcf8",
+     "price": "0.023",
+     "qty": 62400
+    },
+    {
+     "orderId": "01a16298-8a06-75b0-acce-c005e09fb34c",
+     "price": "0.022",
+     "qty": 246600
+    }
+   ]
+  }
+ },
+ "/v3/public/catalog/markets/{id}/trades": {
+  "items": [
+   {
+    "tradeId": "01a16046-9b22-7802-9678-ec3ebfc89862",
+    "takeId": "01a16046-9b22-7802-9678-ec0d0bc65620",
+    "outcomeId": "01a15f6e-520d-7822-8cca-cdc962448e8a",
+    "price": "0.785",
+    "qty": 25000,
+    "ts": 1792616602402
+   },
+   {
+    "tradeId": "01a16046-9b22-7802-9678-ec18ff677271",
+    "takeId": "01a16046-9b22-7802-9678-ec0d0bc65620",
+    "outcomeId": "01a15f6e-520d-7822-8cca-cdc962448e8a",
+    "price": "0.785",
+    "qty": 35000,
+    "ts": 1792616602402
+   }
+  ]
+ },
+ "/v3/public/catalog/markets/{id}": {
+  "marketId": "01a15f6e-520d-7822-8cca-cda862382611",
+  "description": "UNA",
+  "eventId": "01a146f8-4509-7152-bfe2-653b4a09bb82",
+  "marketType": "MONEY",
+  "strike": "0",
+  "status": "OPEN",
+  "voids": "FMV",
+  "startsTs": 1792882800000,
+  "fee": {
+   "coefficient": "0.06",
+   "makerCredit": "0.25",
+   "charged": "WHEN_LIVE"
+  },
+  "outcomes": [
+   {
+    "outcomeId": "01a15f6e-520d-7822-8cca-cdb29b0d96fe",
+    "name": "UNA",
+    "status": "TBD",
+    "last": "0.215",
+    "bid": {
+     "price": "0.023",
+     "qty": 62400
+    }
+   },
+   {
+    "outcomeId": "01a15f6e-520d-7822-8cca-cdc962448e8a",
+    "name": "APSU",
+    "status": "TBD",
+    "last": "0.785"
+   }
+  ],
+  "volume": 60000,
+  "openInterest": 60000
+ }
+}

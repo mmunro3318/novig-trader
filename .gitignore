@@ -1,0 +1,36 @@
+# --- Secrets: never commit (none are in the folder today; this is a guard) ---
+*.pem
+*.key
+*.env
+.env*
+.secrets/
+*secret*
+*credentials*
+
+# --- Personal trading data ---
+analysis/raw/
+analysis/real_*.csv
+analysis/real_*.md
+data/orders.sqlite
+data/journal.sqlite
+data/*.sqlite-*
+data/pbp_cache/
+
+# --- Logs and run output ---
+*.log
+*.out
+live/*_results.txt
+live/*.jsonl
+
+# --- Screenshots (paper-only today, but they show balances/P&L; add back selectively) ---
+shot-*.png
+shots/
+FEEDBACK-*.png
+
+# --- Python / OS clutter ---
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+Thumbs.db
