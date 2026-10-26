@@ -266,7 +266,7 @@ Full details: `docs/LIVE_TRADING.md`. In short:
   - If cash is short, the app sells **in chunks it can afford**. Each chunk pays cash back right away, which funds the next chunk (usually 3–4 chunks in a few seconds). The Orders log shows each chunk.
   - Each position shows **"cash needed to exit at once"**, and the buy buttons warn (yellow ring) when a buy would leave too little cash to exit everything.
   - Practical rule: **keep spare cash in the sub-account.** Cheap long shots (e.g. 0.20) need the most cash to exit.
-- **Fees:** about **3% per leg** on in-game trades, so a buy plus a sell costs roughly **6%, plus the spread**. Small swings can be eaten by fees.
+- **Fees:** Novig charges `0.06 x price x (1 - price)` per contract, and only while the game is live (pregame trades on game lines pay $0). That is about 4.8% of the stake on a long shot at 0.20, about 3% at 0.50 and about 1.8% on a favorite at 0.70, per leg, plus the spread. Small swings can be eaten by fees. Settings (gear icon) can switch the app's fee model to in-game only, always, or off.
 - **Novig's "+$" on a sell** is the total payout, not profit.
 - **Liquidity:** a sell needs someone on the other side. Late in a game the book can be thin, and the order may come back UNFILLED or PARTIAL. That costs nothing; try again or try a smaller size.
 
@@ -332,4 +332,4 @@ Say each item, do it, and **get a "yes, done" before the next one**.
 - [ ] `open_live_subaccount.py` ran with a small `--fund` amount; trading key saved.
 - [ ] Server started with `NOVIG_ENV=production` + `NOVIG_ALLOW_LIVE_ORDERS=1`; header shows PRODUCTION / orders ON.
 - [ ] $1 buy → FILLED; SELL ALL → FILLED.
-- [ ] Explained: sells need cash (keep spare), ~3% fee per leg, trades from Novig's own app must be sold there.
+- [ ] Explained: sells need cash (keep spare), in-game fee of 6% x p x (1 - p) per contract (bigger on long shots), trades from Novig's own app must be sold there.

@@ -95,3 +95,16 @@ Files: `static/trade.html` (shell), `static/trade.css` (design tokens at the top
 - **Daily loss cap**: now soft. Past the cap, a buy pops a confirm ("I'm sure"); sells are never blocked. Cap and per-order max are editable in ⚙ (saved to `data/settings.json`), with the time zone (default = this computer's).
 - **Account hero** (top right, labels on hover): account value (cash + open), cash, open value, today's P&L, win rate, open count, est. return if held (win chance × payout − cost), total P&L.
 - **Targets (local limit orders)**: Ticket → Advanced. "When odds ≥ / ≤ X" (buy uses the ask, sell uses the sell-now price) or "profit ≥ X% / loss ≥ X%" for sells. Watched server-side every ~2s; fires one normal IOC order (same slippage cap, idempotent `trg-<id>`), then disarms. Expires after 1-12h. Trailing and compound rules are not built yet.
+
+## Round 2 feedback + money-flow fixes (Oct 26, 2026)
+
+Full list with status and open questions: [docs/feedback-round2.md](docs/feedback-round2.md).
+
+- **Position card**: cash-out now (big), odds now with a 1-minute momentum bracket, P&L $ and %, what you paid @ the odds you got, one row per buy with its own `sell` button, fees in/out. Buttons: Sell half · Sell $N / % · SELL ALL.
+- **Selection**: cyan border on whatever is selected; the same outcome elsewhere on screen gets a faint teal border. Cards with a position glow green. Scores pop (white), tickers are grey.
+- **Ticket**: order book hidden by default (toggle "show full order book"); each side shows your position and the money resting on the book; Game data + Key events stubs (injuries/news: backlog). Bigger "Advanced order" button.
+- **Timeline + field** between the two sides: quarters, game events coloured by team, a "now" marker, down & distance, and where the ball is (0 = own goal line, 100 = the end zone they attack).
+- **Parlay slip** (planner only; Novig's API can't place parlays): tick PARLAY, click odds to add legs, review, copy for the Novig app.
+- **Money math**: held-to-final results count in P&L and the win rate; SETTLING state; exits never resend the same size on low cash ("need $X, have $Y"); no retries after the game ends; "are you sure?" on last-2-minute and long-shot buys; double-click guard; fee = 0.06·p·(1−p), in-game only (Settings can change it).
+- **Tests**: `python -m unittest discover -s tests -v`.
+- **Screenshots without `chrome --screenshot`** (it hangs on pages that poll): start `google-chrome-stable --headless=new --remote-debugging-port=9333 about:blank`, then `node --experimental-websocket tools/cdp_shot.js <url> shots/x.png 1440 1000 7000`.

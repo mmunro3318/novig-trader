@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Novig Trader</title><link rel="stylesheet" href="trade.css?v=5"></head><body>
+<title>Novig Trader</title><link rel="stylesheet" href="trade.css?v=6"></head><body>
 <header>
   <span class="brand">NOVIG TRADER</span><span id="env" class="badge paper">…</span><span id="ord" class="badge off">orders …</span>
   <span class="hctl" data-tip="Max slippage: a buy never fills more than this many cents above the ask">slip <select id="slip"><option>1</option><option selected>2</option><option>3</option><option>5</option></select>¢</span>
@@ -32,12 +32,12 @@
   </section>
   <div class="col">
     <section class="panel" id="mktPanel"><h3><span class="mtitle" id="mtitle">Pick a game</span></h3><div id="mgrid"></div><div id="ticket"></div></section>
-    <section class="panel" style="flex:0 0 34%"><h3>Orders · receipts (newest first)</h3><div id="ilist"></div></section>
+    <section class="panel" id="ordPanel"><h3>Orders · receipts (newest first)</h3><div id="ilist"></div></section>
   </div>
-  <section class="panel"><h3>Positions</h3><div id="psum"></div><div id="plist">loading…</div></section>
+  <section class="panel" id="posPanel"><h3>Positions</h3><div id="psum"></div><div id="plist">loading…</div></section>
 </main>
 <div id="toasts"></div>
 <div id="modal"><div class="box"><h4 id="mH"></h4><div id="mB"></div><div class="btns" style="justify-content:flex-end;margin-top:12px"><button class="btn h" id="mNo">Cancel</button><button class="btn" id="mYes">Confirm</button></div></div></div>
 <div id="pop"></div>
-<script src="trade.js?v=5"></script>
+<script src="trade.js?v=6"></script>
 </body></html>
