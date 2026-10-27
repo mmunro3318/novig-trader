@@ -48,7 +48,7 @@ Status: **DONE**, **PARTIAL** (part built, rest noted), **BACKLOG** (not built y
 1. **A8**: what is the black square with the red dot and the arrow (between Key Events and Game Data)? A record/alert button, or a stray mark?
 2. **B3 parlays**: Novig's API can't place parlays. OK to keep the slip as a planner that copies the legs for the Novig app? Or should the parlay box be hidden until Novig opens it up?
 3. **B7**: the red slash across "PAST (8)". Hide past games, fold them by default (phone already folds them), or something else?
-4. **A6 P&L**: the big number is the cash-out after the exit fee, and +/- is that minus everything you paid including entry fees. Your note said "what I initially paid (before fees)". Do you want the +/- before fees instead?
+4. **A6 P&L**: the big number is the cash-out after the exit fee; +/- is that minus what the contracts you still hold cost, including their entry fees (anything you already sold is booked as realized P&L in the header totals). The "$15.00" you paid is shown before fees, as in your note. Do you want the +/- before fees instead?
 5. **A6 momentum**: the [+/-] bracket shows how much the odds moved in the last minute (green when it moved your way). Different window (since entry, last 5 min)? Or always yellow like your mock?
 6. **Lots**: when you press Sell half / Sell $N, each buy is reduced in proportion. Would you rather it sell the lowest-odds buys first?
 7. From round 1: what did the small red corner marks mean, and should spreads read from the home side (`SEA -2.5`) or the away side?
